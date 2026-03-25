@@ -132,6 +132,8 @@ Notes:
 - `data/classes.txt` should exist and list labels in order 0..13.
 - The app uses uploaded checkpoint first; if not uploaded, it falls back to `checkpoint` in `config.yml` (if provided).
 
+<img width="740" height="669" alt="image" src="https://github.com/user-attachments/assets/c60da6b8-2069-49ec-b1f1-9a9d979dc1c4" />
+
 
 ## 📌 Model checkpoint saving (auto-numbering + naming)
 
