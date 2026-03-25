@@ -90,19 +90,6 @@ rnn:
   dropout: 0.1
 ```
 
-
-### Train RNN model
-
-```powershell
-python -m src.train --config_file config.yml
-```
-
-`train.py` currently supports only one CLI argument:
-
-- `--config_file`: path to a YAML config file (default `config.yml`)
-
-All other training parameters are read from the config YAML
-
 ---
 
 ## 📌 Model checkpoint saving (auto-numbering + naming)
