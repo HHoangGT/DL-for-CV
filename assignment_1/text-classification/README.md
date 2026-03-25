@@ -103,37 +103,7 @@ python -m src.train --config_file config.yml
 
 All other training parameters are read from the config YAML
 
-
-## 🖥️ Streamlit UI (Simple inference)
-
-1) Install dependencies:
-
-```powershell
-pip install streamlit
-```
-
-2) Run the app from repository root (`text-classification`):
-
-```powershell
-streamlit run streamlit_app.py
-```
-
-3) On the Streamlit page:
-- Enter the path to `config.yml` (default `config.yml` in root).
-- Upload a checkpoint file (`.pth` or `.pt`) via the `Upload checkpoint file` button (required).
-- Input text to classify.
-- Click `Predict`.
-
-4) Output:
-- Predicted class label (0-based) and class name from `data/classes.txt`.
-
-Notes:
-- `config.yml` should include `model`, `max_len`, and `num_classes`.
-- `data/classes.txt` should exist and list labels in order 0..13.
-- The app uses uploaded checkpoint first; if not uploaded, it falls back to `checkpoint` in `config.yml` (if provided).
-
-<img width="740" height="669" alt="image" src="https://github.com/user-attachments/assets/c60da6b8-2069-49ec-b1f1-9a9d979dc1c4" />
-
+---
 
 ## 📌 Model checkpoint saving (auto-numbering + naming)
 
@@ -218,3 +188,35 @@ If `--checkpoint` is missing, `predict.py` will use the `checkpoint` field from 
   - `src/predict.py` — inference script
   - `src/models/` — model definitions (Transformer/RNN)
   - `src/utils/` — preprocessing + helpers
+
+---
+
+## 🖥️ Streamlit UI (Simple inference)
+
+1) Install dependencies:
+
+```powershell
+pip install streamlit
+```
+
+2) Run the app from repository root (`text-classification`):
+
+```powershell
+streamlit run streamlit_app.py
+```
+
+3) On the Streamlit page:
+- Enter the path to `config.yml` (default `config.yml` in root).
+- Upload a checkpoint file (`.pth` or `.pt`) via the `Upload checkpoint file` button (required).
+- Input text to classify.
+- Click `Predict`.
+
+4) Output:
+- Predicted class label (0-based) and class name from `data/classes.txt`.
+
+Notes:
+- `config.yml` should include `model`, `max_len`, and `num_classes`.
+- `data/classes.txt` should exist and list labels in order 0..13.
+- The app uses uploaded checkpoint first; if not uploaded, it falls back to `checkpoint` in `config.yml` (if provided).
+
+<img width="740" height="669" alt="image" src="https://github.com/user-attachments/assets/c60da6b8-2069-49ec-b1f1-9a9d979dc1c4" />
