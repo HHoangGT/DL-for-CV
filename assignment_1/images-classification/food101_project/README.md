@@ -1,16 +1,3 @@
-Dưới đây là bản README cập nhật đầy đủ, đã chỉnh lại cho khớp hơn với project hiện tại của bạn, bao gồm:
-
-phần image classification cho Food-101
-EDA
-training/evaluation
-CNN vs ViT
-các run thực tế bạn đã chạy
-Grad-CAM, error analysis, Gradio demo
-lưu ý môi trường Python 3.9 / 3.13
-workflow để nộp bài, làm slide, GitHub Pages
-
-Bạn có thể copy đè toàn bộ vào README.md.
-
 # Food-101 Image Classification Project (CNN vs ViT)
 
 This project is designed to satisfy the **image classification** branch of the CO5085 assignment.  
