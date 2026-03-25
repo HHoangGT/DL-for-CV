@@ -1,7 +1,5 @@
 import argparse
-import json
 import os
-import re
 import time
 
 import torch
@@ -27,7 +25,9 @@ except ImportError:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train PyTorch text classifier on DBpedia")
+    parser = argparse.ArgumentParser(
+        description="Train PyTorch text classifier on DBpedia"
+    )
     parser.add_argument(
         "--config_file",
         type=str,
@@ -42,7 +42,7 @@ def load_config(path):
     if ext not in [".yaml", ".yml"]:
         raise ValueError("Config file must be .yaml or .yml")
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         try:
             import yaml
         except ImportError as exc:
@@ -88,7 +88,9 @@ def build_args_from_config(config):
 
     model_config = config.get(model)
     if not isinstance(model_config, dict):
-        raise ValueError(f"Config must include nested '{model}' config with model-specific values")
+        raise ValueError(
+            f"Config must include nested '{model}' config with model-specific values"
+        )
 
     for key in required_model:
         if key not in model_config:
@@ -108,7 +110,6 @@ def build_args_from_config(config):
 
 
 def main():
-
     # 1. Cấu hình (arguments) + chuẩn bị môi trường
 
     args = parse_args()
@@ -133,7 +134,9 @@ def main():
     vocab = build_vocab(train_samples, tokenizer, max_size=args.max_vocab)
 
     # Split test into val + test (10% val)
-    test_samples, val_samples, val_size, test_size = split_dataset(test_samples, val_ratio=0.1)
+    test_samples, val_samples, val_size, test_size = split_dataset(
+        test_samples, val_ratio=0.1
+    )
     print(f"Using {val_size} samples for val and {test_size} samples for test.")
 
     train_dataset = DBpediaDataset(
@@ -241,7 +244,9 @@ def main():
         epoch_acc = 0.0
         start_time = time.time()
 
-        for batch_idx, (token_ids, attn_mask, labels) in enumerate(train_loader, start=1):
+        for batch_idx, (token_ids, attn_mask, labels) in enumerate(
+            train_loader, start=1
+        ):
             token_ids = token_ids.to(device)
             attn_mask = attn_mask.to(device)
             labels = labels.to(device)

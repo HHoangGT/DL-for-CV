@@ -9,7 +9,9 @@ def accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
     return correct / labels.size(0)
 
 
-def save_checkpoint(model, optimizer, epoch: int, path: str, extras: dict = None) -> None:
+def save_checkpoint(
+    model, optimizer, epoch: int, path: str, extras: dict = None
+) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     checkpoint = {
         "epoch": epoch,

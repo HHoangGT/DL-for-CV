@@ -1,0 +1,9 @@
+# open_clip_torch
+datasets
+loguru
+matplotlib
+pandas
+Pillow
+scikit-learn
+seaborn
+tqdm

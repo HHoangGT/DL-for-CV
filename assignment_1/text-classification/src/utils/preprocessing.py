@@ -1,6 +1,5 @@
 import csv
 import random
-from typing import List, Optional, Tuple
 
 from torchtext.vocab import build_vocab_from_iterator
 
@@ -27,10 +26,10 @@ class FixedVocab:
 
 def read_dbpedia_csv(
     path: str,
-    max_rows: Optional[int] = None,
+    max_rows: int | None = None,
     shuffle: bool = True,
-    seed: Optional[int] = None,
-) -> List[Tuple[int, str]]:
+    seed: int | None = None,
+) -> list[tuple[int, str]]:
     """Read DBpedia csv file and return list of (label, text).
 
     If `shuffle` is True, the rows are shuffled (random order) before returning.
@@ -44,7 +43,8 @@ def read_dbpedia_csv(
                 break
             if len(row) < 3:
                 continue
-            if row[0] == "label": continue
+            if row[0] == "label":
+                continue
             label = int(row[0])
             text = row[2]
             rows.append((label, text))
@@ -57,7 +57,7 @@ def read_dbpedia_csv(
     return rows
 
 
-def build_vocab(samples: List[Tuple[int, str]], tokenizer, max_size: int = 50000):
+def build_vocab(samples: list[tuple[int, str]], tokenizer, max_size: int = 50000):
     """Build a vocabulary from samples using torchtext."""
 
     def yield_tokens(data_iter):
