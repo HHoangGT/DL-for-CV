@@ -3,17 +3,17 @@
 A small PyTorch project for training/benchmarking text classifiers on DBpedia-14.
 https://huggingface.co/datasets/fancyzhx/dbpedia_14
 
----
+______________________________________________________________________
 
 ## ✅ Quick Overview
 
-| Folder | Purpose |
-|-------|---------|
-| `data/` | Dataset CSVs (`train.csv`, `test.csv`) |
+| Folder    | Purpose                                  |
+| --------- | ---------------------------------------- |
+| `data/`   | Dataset CSVs (`train.csv`, `test.csv`)   |
 | `models/` | Saved checkpoints (`models/<model>/...`) |
-| `src/` | Training script + models + utils |
+| `src/`    | Training script + models + utils         |
 
----
+______________________________________________________________________
 
 ## ✅ Requirements
 
@@ -31,22 +31,24 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
----
+______________________________________________________________________
 
 ## 📁 Dataset layout
 
 Place your DBpedia CSVs under `data/`.
 
 **Required format** (CSV):
+
 - Columns: `class,title,content`
 
 Example:
+
 - `data/train.csv`
 - `data/test.csv`
 
 > You can still store raw copies elsewhere (e.g. `data/raw/`), but the scripts default to `data/train.csv` and `data/test.csv`.
 
----
+______________________________________________________________________
 
 ## 🚀 Train (Quick Start)
 
@@ -91,7 +93,7 @@ rnn:
   dropout: 0.1
 ```
 
----
+______________________________________________________________________
 
 ## 📌 Model checkpoint saving (auto-numbering + naming)
 
@@ -100,42 +102,48 @@ Checkpoints are stored under:
 - `models/transformer/` (Transformer)
 - `models/rnn/` (RNN)
 
-
 ### Custom name
+
 ```powershell
 python -m src.train --model transformer --save_name my_run
 ```
+
 => `models/transformer/my_run.pth`
 
 ### Keep all improving checkpoints
+
 ```powershell
 python -m src.train --model transformer --save_all
 ```
+
 => saves extra checkpoints like:
+
 - `.../001_epoch03_val0.9123_20260319_142212.pth`
 
----
+______________________________________________________________________
 
 ## 🧠 Model defaults (if you don’t override)
 
 ### Transformer defaults
-| Param | Default |
-|------|--------|
-| `embed_dim` | 128 |
-| `num_heads` | 4 |
-| `hidden_dim` | 256 |
-| `num_layers` | 2 |
-| `dropout` | 0.1 |
+
+| Param        | Default |
+| ------------ | ------- |
+| `embed_dim`  | 128     |
+| `num_heads`  | 4       |
+| `hidden_dim` | 256     |
+| `num_layers` | 2       |
+| `dropout`    | 0.1     |
 
 ### RNN defaults
-| Param | Default |
-|------|--------|
-| `embed_dim` | 128 |
-| `hidden_dim` | 256 |
-| `num_layers` | 2 |
-| `dropout` | 0.1 |
 
----
+| Param        | Default |
+| ------------ | ------- |
+| `embed_dim`  | 128     |
+| `hidden_dim` | 256     |
+| `num_layers` | 2       |
+| `dropout`    | 0.1     |
+
+______________________________________________________________________
 
 ## 🧪 Inference (Predict)
 
@@ -165,7 +173,7 @@ python -m src.predict --config_file config.yml \
 
 If `--checkpoint` is missing, `predict.py` will use the `checkpoint` field from `config.yml` (if present).
 
----
+______________________________________________________________________
 
 ## 📂 Project structure
 
@@ -177,32 +185,35 @@ If `--checkpoint` is missing, `predict.py` will use the `checkpoint` field from 
   - `src/models/` — model definitions (Transformer/RNN)
   - `src/utils/` — preprocessing + helpers
 
----
+______________________________________________________________________
 
 ## 🖥️ Streamlit UI (Simple inference)
 
-1) Install dependencies:
+1. Install dependencies:
 
 ```powershell
 pip install streamlit
 ```
 
-2) Run the app from repository root (`text-classification`):
+2. Run the app from repository root (`text-classification`):
 
 ```powershell
 streamlit run streamlit_app.py
 ```
 
-3) On the Streamlit page:
+3. On the Streamlit page:
+
 - Enter the path to `config.yml` (default `config.yml` in root).
 - Upload a checkpoint file (`.pth` or `.pt`) via the `Upload checkpoint file` button (required).
 - Input text to classify.
 - Click `Predict`.
 
-4) Output:
+4. Output:
+
 - Predicted class label (0-based) and class name from `data/classes.txt`.
 
 Notes:
+
 - `config.yml` should include `model`, `max_len`, and `num_classes`.
 - `data/classes.txt` should exist and list labels in order 0..13.
 - The app uses uploaded checkpoint first; if not uploaded, it falls back to `checkpoint` in `config.yml` (if provided).

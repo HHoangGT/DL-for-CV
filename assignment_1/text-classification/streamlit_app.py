@@ -73,7 +73,9 @@ def load_model(config_path: str, checkpoint_path: str, device: str):
 
 
 def predict_text(model, vocab, text: str, tokenizer, max_len: int, device: str):
-    seqs, mask = tokenize_and_pad([text], tokenizer, vocab, max_len, pad_index=vocab["<pad>"], device=device)
+    seqs, mask = tokenize_and_pad(
+        [text], tokenizer, vocab, max_len, pad_index=vocab["<pad>"], device=device
+    )
     with torch.no_grad():
         logits = model(seqs, mask)
         pred = torch.argmax(logits, dim=-1).item()
@@ -92,7 +94,9 @@ def main():
     base_dir = Path(".")
     config_file = st.text_input("Config file path", value=str(base_dir / "config.yml"))
 
-    uploaded_checkpoint = st.file_uploader("Upload checkpoint file (browse)", type=["pth", "pt"])
+    uploaded_checkpoint = st.file_uploader(
+        "Upload checkpoint file (browse)", type=["pth", "pt"]
+    )
 
     input_text = st.text_area("Text to classify", value="Enter text here...")
     run_predict = st.button("Predict")
@@ -136,8 +140,14 @@ def main():
             config, model, vocab = load_model(config_file, ckpt, device)
             tokenizer = get_tokenizer("basic_english")
             max_len = config.get("max_len", 128)
-            pred_idx = predict_text(model, vocab, input_text, tokenizer, max_len, device)
-            label_name = labels[pred_idx+1] if 0 <= pred_idx < len(labels) else f"Class {pred_idx+1}"
+            pred_idx = predict_text(
+                model, vocab, input_text, tokenizer, max_len, device
+            )
+            label_name = (
+                labels[pred_idx + 1]
+                if 0 <= pred_idx < len(labels)
+                else f"Class {pred_idx + 1}"
+            )
 
             st.success("Prediction completed")
             st.write("**Predicted class:**", label_name)

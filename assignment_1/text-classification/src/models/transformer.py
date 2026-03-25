@@ -11,7 +11,9 @@ class PositionalEncoding(nn.Module):
 
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        div_term = torch.exp(
+            torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model)
+        )
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
@@ -38,7 +40,9 @@ class TransformerClassifier(nn.Module):
     ):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=pad_index)
-        self.positional_encoding = PositionalEncoding(embed_dim, dropout=dropout, max_len=max_len)
+        self.positional_encoding = PositionalEncoding(
+            embed_dim, dropout=dropout, max_len=max_len
+        )
 
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=embed_dim,
@@ -47,7 +51,9 @@ class TransformerClassifier(nn.Module):
             dropout=dropout,
             activation="relu",
         )
-        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.transformer_encoder = nn.TransformerEncoder(
+            encoder_layer, num_layers=num_layers
+        )
 
         self.cls_head = nn.Sequential(
             nn.LayerNorm(embed_dim),

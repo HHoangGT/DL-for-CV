@@ -1,7 +1,5 @@
 import argparse
 import os
-import sys
-from typing import List, Optional
 
 import torch
 
@@ -27,7 +25,9 @@ def load_config(path: str):
     try:
         import yaml
     except ImportError as exc:
-        raise ImportError("PyYAML is required to read YAML config files (pip install pyyaml)") from exc
+        raise ImportError(
+            "PyYAML is required to read YAML config files (pip install pyyaml)"
+        ) from exc
 
     with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -37,18 +37,18 @@ def load_config(path: str):
     return cfg
 
 
-def read_text_file(path: str) -> List[str]:
+def read_text_file(path: str) -> list[str]:
     with open(path, encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
 
 
 def tokenize_and_pad(
-    texts: List[str],
+    texts: list[str],
     tokenizer,
     vocab,
     max_len: int,
     pad_index: int = 0,
-    device: Optional[str] = None,
+    device: str | None = None,
 ):
     token_ids = []
     for t in texts:
@@ -74,11 +74,17 @@ def tokenize_and_pad(
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Run inference with a trained model")
-    parser.add_argument("--config_file", default="config.yml", help="Path to YAML config file")
-    parser.add_argument("--checkpoint", default=None, help="Override checkpoint path from config")
+    parser.add_argument(
+        "--config_file", default="config.yml", help="Path to YAML config file"
+    )
+    parser.add_argument(
+        "--checkpoint", default=None, help="Override checkpoint path from config"
+    )
     parser.add_argument("--input_text", type=str, help="Single text to classify")
     parser.add_argument("--input_file", type=str, help="File with one text per line")
-    parser.add_argument("--max_len", type=int, default=None, help="Optional override max len")
+    parser.add_argument(
+        "--max_len", type=int, default=None, help="Optional override max len"
+    )
     return parser.parse_args()
 
 
@@ -150,7 +156,9 @@ def main():
     else:
         texts = read_text_file(args.input_file)
 
-    seqs, mask = tokenize_and_pad(texts, tokenizer, vocab, max_len, pad_index=vocab["<pad>"], device=device)
+    seqs, mask = tokenize_and_pad(
+        texts, tokenizer, vocab, max_len, pad_index=vocab["<pad>"], device=device
+    )
 
     with torch.no_grad():
         logits = model(seqs, mask)
