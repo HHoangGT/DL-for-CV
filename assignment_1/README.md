@@ -18,6 +18,7 @@
 - Demo video: to be updated
 - Presentation video (YouTube): to be updated
 - Report PDF: [assignment_1/report.pdf](assignment_1/report.pdf)
+- Landing Page: [index.html](../index.html)
 
 The source code is organized into 3 independent parts:
 

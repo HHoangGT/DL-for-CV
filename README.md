@@ -4,7 +4,8 @@ Course repository for Deep Learning for Computer Vision assignments.
 
 ## Team
 
-**Group 13**
+**Group 13** [Landing Page](index.html)
+
 
 | Member | Student ID |
 | --- | --- |

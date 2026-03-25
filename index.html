@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Group13 | Assignment Landing Page</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
+
+    :root {
+      --bg: #f4f2eb;
+      --bg-accent: #e9e3d8;
+      --text: #1c2118;
+      --muted: #5f6a56;
+      --panel: rgba(255, 255, 255, 0.62);
+      --line: rgba(37, 53, 23, 0.14);
+      --brand: #1f6f4a;
+      --brand-strong: #164f35;
+      --gold: #c58f2d;
+      --radius: 18px;
+      --shadow: 0 16px 45px rgba(17, 35, 24, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: "Be Vietnam Pro", sans-serif;
+      background:
+        radial-gradient(900px 420px at 120% -10%, rgba(31, 111, 74, 0.23), transparent 60%),
+        radial-gradient(600px 350px at -10% 0%, rgba(197, 143, 45, 0.2), transparent 62%),
+        linear-gradient(140deg, var(--bg) 0%, #f9f7f2 50%, var(--bg-accent) 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(2px);
+    }
+
+    body::before {
+      width: 290px;
+      height: 290px;
+      right: -90px;
+      top: 26%;
+      background: linear-gradient(180deg, rgba(31, 111, 74, 0.22), rgba(31, 111, 74, 0.02));
+      animation: floatA 9s ease-in-out infinite;
+    }
+
+    body::after {
+      width: 190px;
+      height: 190px;
+      left: -60px;
+      bottom: 7%;
+      background: linear-gradient(180deg, rgba(197, 143, 45, 0.19), rgba(197, 143, 45, 0.03));
+      animation: floatB 11s ease-in-out infinite;
+    }
+
+    @keyframes floatA {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-16px); }
+    }
+
+    @keyframes floatB {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(14px); }
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(260px, 300px) 1fr;
+      min-height: 100vh;
+      gap: 18px;
+      padding: 22px;
+    }
+
+    .menu {
+      align-self: start;
+      position: sticky;
+      top: 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .menu-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.1rem;
+      margin: 0 0 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .menu-subtitle {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .menu-button,
+    .assignment-button,
+    .expand-button,
+    .task-button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: inherit;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: 0.22s ease;
+    }
+
+    .menu-button {
+      padding: 12px;
+      margin-bottom: 12px;
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.45);
+      font-weight: 600;
+    }
+
+    .menu-button:hover,
+    .menu-button.active {
+      background: linear-gradient(120deg, rgba(31, 111, 74, 0.11), rgba(197, 143, 45, 0.11));
+      border-color: rgba(31, 111, 74, 0.35);
+      transform: translateX(2px);
+    }
+
+    .assignment-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .assignment-button {
+      border: 1px solid var(--line);
+      padding: 12px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .assignment-button:hover,
+    .assignment-button.active {
+      border-color: rgba(31, 111, 74, 0.35);
+      background: linear-gradient(120deg, rgba(31, 111, 74, 0.11), rgba(197, 143, 45, 0.11));
+      transform: translateX(2px);
+    }
+
+    .expand-button {
+      width: 42px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.45);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      color: var(--brand-strong);
+    }
+
+    .expand-button:hover,
+    .expand-button.active {
+      background: rgba(31, 111, 74, 0.12);
+      border-color: rgba(31, 111, 74, 0.35);
+    }
+
+    .tasks {
+      display: grid;
+      gap: 7px;
+      padding: 4px 0 0 8px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.36s ease, opacity 0.26s ease;
+    }
+
+    .tasks.open {
+      max-height: 220px;
+      opacity: 1;
+    }
+
+    .task-button {
+      padding: 10px;
+      border: 1px dashed rgba(31, 111, 74, 0.3);
+      background: rgba(255, 255, 255, 0.35);
+      color: var(--brand-strong);
+      font-size: 0.94rem;
+      font-weight: 500;
+    }
+
+    .task-button:hover,
+    .task-button.active {
+      background: rgba(31, 111, 74, 0.16);
+      border-style: solid;
+    }
+
+    .content {
+      min-width: 0;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 3vw, 36px);
+      animation: fadeInUp 0.55s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.77rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brand-strong);
+      background: rgba(31, 111, 74, 0.13);
+      border: 1px solid rgba(31, 111, 74, 0.2);
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(1.5rem, 2.7vw, 2.2rem);
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .lead {
+      margin: 0 0 16px;
+      color: var(--muted);
+      max-width: 80ch;
+      line-height: 1.62;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.48);
+      transform: translateY(6px);
+      opacity: 0;
+      animation: itemReveal 0.45s forwards;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.03s; }
+    .card:nth-child(2) { animation-delay: 0.11s; }
+    .card:nth-child(3) { animation-delay: 0.19s; }
+    .card:nth-child(4) { animation-delay: 0.27s; }
+
+    @keyframes itemReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--brand-strong);
+    }
+
+    .card p {
+      margin: 0;
+      color: #43503b;
+      line-height: 1.54;
+    }
+
+    .section-title {
+      margin: 18px 0 10px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      color: var(--brand-strong);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 7px 0;
+      line-height: 1.5;
+    }
+
+    .code-list {
+      background: #101812;
+      color: #edf8e9;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 14px;
+      overflow-x: auto;
+    }
+
+    .code-list code {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.88rem;
+      white-space: pre;
+      line-height: 1.5;
+      margin: 2px 0;
+    }
+
+    .visuals {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    figure {
+      margin: 0;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    figure img {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .report-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(120deg, var(--brand), var(--brand-strong));
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-weight: 600;
+      margin-top: 8px;
+      transition: transform 0.2s ease;
+    }
+
+    .resource-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .report-link:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .menu {
+        position: static;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="menu" aria-label="Assignment menu">
+      <h2 class="menu-title">DL for CV</h2>
+      <p class="menu-subtitle">GitHub Landing Navigation</p>
+
+      <button id="home-btn" class="menu-button active" type="button">Home</button>
+
+      <div class="assignment-row">
+        <button id="assignment-btn" class="assignment-button" type="button">assignment_1</button>
+        <button id="expand-btn" class="expand-button" aria-expanded="true" aria-controls="tasks" type="button">-</button>
+      </div>
+
+      <div id="tasks" class="tasks" role="group" aria-label="Assignment tasks"></div>
+    </aside>
+
+    <main id="content" class="content" aria-live="polite"></main>
+  </div>
+
+  <script src="assignment_1/docs/content.js"></script>
+  <script>
+    const state = {
+      assignmentExpanded: true,
+      currentView: "home",
+      currentTask: null
+    };
+
+    const refs = {
+      homeBtn: document.getElementById("home-btn"),
+      assignmentBtn: document.getElementById("assignment-btn"),
+      expandBtn: document.getElementById("expand-btn"),
+      tasksWrap: document.getElementById("tasks"),
+      content: document.getElementById("content")
+    };
+
+    const assignment = CONTENT.assignment.assignment_1;
+
+    const taskEntries = Object.entries(assignment.tasks);
+
+    function escapeHTML(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderTaskButtons() {
+      refs.tasksWrap.innerHTML = taskEntries
+        .map(([key, task]) => {
+          const activeClass = state.currentView === "task" && state.currentTask === key ? "active" : "";
+          return '<button class="task-button ' + activeClass + '" data-task="' + key + '" type="button">' + escapeHTML(task.name) + "</button>";
+        })
+        .join("");
+
+      refs.tasksWrap.querySelectorAll(".task-button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.currentView = "task";
+          state.currentTask = btn.getAttribute("data-task");
+          updateView();
+        });
+      });
+    }
+
+    function renderHome() {
+      const home = CONTENT.home;
+      const members = home.members.map((m) => "<li>" + escapeHTML(m) + "</li>").join("");
+
+      refs.content.innerHTML = [
+        '<span class="eyebrow">Home</span>',
+        "<h1>" + escapeHTML(home.title) + "</h1>",
+        '<p class="lead">Welcome to the Group13 landing page. This page is used to navigate assignment reports and quickly access key implementation details.</p>',
+        '<div class="card-grid">',
+        '<article class="card"><h3>Group</h3><p>' + escapeHTML(home.group) + "</p></article>",
+        '<article class="card"><h3>Supervisor</h3><p>' + escapeHTML(home.supervisor) + "</p></article>",
+        "</div>",
+        '<h2 class="section-title">Members</h2>',
+        "<ul>" + members + "</ul>"
+      ].join("");
+    }
+
+    function renderAssignmentOverview() {
+      const infoHTML = assignment.info.map((item) => "<li>" + escapeHTML(item) + "</li>").join("");
+      const overviewHTML = assignment.overview.map((item) => "<li>" + escapeHTML(item) + "</li>").join("");
+
+      refs.content.innerHTML = [
+        '<span class="eyebrow">Assignment</span>',
+        "<h1>" + escapeHTML(assignment.title) + "</h1>",
+        '<p class="lead">Click a task in the left menu to open detailed report content for that specific section.</p>',
+        '<div class="resource-links">',
+        '<a class="report-link" href="' + escapeHTML(assignment.report) + '" target="_blank" rel="noopener noreferrer">Open Full Report (PDF)</a>',
+        '<a class="report-link" href="' + escapeHTML(assignment.readme) + '" target="_blank" rel="noopener noreferrer">Open Readme</a>',
+        '<a class="report-link" href="' + escapeHTML(assignment.youtube) + '" target="_blank" rel="noopener noreferrer">Open Youtube</a>',
+        '</div>',
+        '<h2 class="section-title">Assignment Info</h2>',
+        "<ul>" + infoHTML + "</ul>",
+        '<h2 class="section-title">Overview</h2>',
+        "<ul>" + overviewHTML + "</ul>"
+      ].join("");
+    }
+
+    function renderTask(taskKey) {
+      const task = assignment.tasks[taskKey];
+      const highlights = task.highlights.map((item) => "<li>" + escapeHTML(item) + "</li>").join("");
+      const commands = task.commands.map((cmd) => "<code>$ " + escapeHTML(cmd) + "</code>").join("");
+      const visuals = task.visuals
+        .map((v) => {
+          return [
+            "<figure>",
+            '<img src="' + escapeHTML(v.src) + '" alt="' + escapeHTML(v.alt) + '">',
+            "<figcaption>" + escapeHTML(v.alt) + "</figcaption>",
+            "</figure>"
+          ].join("");
+        })
+        .join("");
+
+      refs.content.innerHTML = [
+        '<span class="eyebrow">Detailed Report</span>',
+        "<h1>" + escapeHTML(task.name) + "</h1>",
+        '<p class="lead">' + escapeHTML(task.objective) + "</p>",
+        '<div class="card-grid">',
+        '<article class="card"><h3>Dataset</h3><p>' + escapeHTML(task.dataset) + "</p></article>",
+        '<article class="card"><h3>Directory</h3><p>' + escapeHTML(task.directory) + "</p></article>",
+        "</div>",
+        '<h2 class="section-title">Technical Highlights</h2>',
+        "<ul>" + highlights + "</ul>",
+        '<h2 class="section-title">Quick Commands</h2>',
+        '<div class="code-list">' + commands + "</div>",
+        '<h2 class="section-title">Visual Results</h2>',
+        '<div class="visuals">' + visuals + "</div>"
+      ].join("");
+    }
+
+    function syncMenuState() {
+      refs.homeBtn.classList.toggle("active", state.currentView === "home");
+      refs.assignmentBtn.classList.toggle("active", state.currentView === "assignment");
+      refs.expandBtn.classList.toggle("active", state.assignmentExpanded);
+      refs.expandBtn.textContent = state.assignmentExpanded ? "-" : "+";
+      refs.expandBtn.setAttribute("aria-expanded", String(state.assignmentExpanded));
+      refs.tasksWrap.classList.toggle("open", state.assignmentExpanded);
+
+      if (!state.assignmentExpanded && state.currentView === "task") {
+        state.currentView = "assignment";
+        state.currentTask = null;
+      }
+    }
+
+    function updateView() {
+      syncMenuState();
+      renderTaskButtons();
+
+      if (state.currentView === "home") {
+        renderHome();
+        return;
+      }
+
+      if (state.currentView === "assignment") {
+        renderAssignmentOverview();
+        return;
+      }
+
+      if (state.currentView === "task" && state.currentTask) {
+        renderTask(state.currentTask);
+      }
+    }
+
+    refs.homeBtn.addEventListener("click", () => {
+      state.currentView = "home";
+      state.currentTask = null;
+      updateView();
+    });
+
+    refs.assignmentBtn.addEventListener("click", () => {
+      state.currentView = "assignment";
+      state.currentTask = null;
+      updateView();
+    });
+
+    refs.expandBtn.addEventListener("click", () => {
+      state.assignmentExpanded = !state.assignmentExpanded;
+      if (state.assignmentExpanded && state.currentView === "home") {
+        state.currentView = "assignment";
+      }
+      updateView();
+    });
+
+    updateView();
+  </script>
+</body>
+</html>
