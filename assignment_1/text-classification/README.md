@@ -1,6 +1,7 @@
-# text-classification (PyTorch text classification)
+# text-classification (RNN vs. Transformer)
 
-A small PyTorch project for training/benchmarking text classifiers on DBpedia.
+A small PyTorch project for training/benchmarking text classifiers on DBpedia-14.
+https://huggingface.co/datasets/fancyzhx/dbpedia_14
 
 ---
 
