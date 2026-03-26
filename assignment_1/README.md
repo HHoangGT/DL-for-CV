@@ -99,7 +99,7 @@ python run_experiments.py --models resnet50 vit_b_16 --epochs 8 --batch_size 16
 
 ---
 
-## 2) Emotion Classification (Text Classification)
+## 2) Text Classification
 
 ### 2.1 Dataset
 
