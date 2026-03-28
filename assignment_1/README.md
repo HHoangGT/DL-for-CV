@@ -18,7 +18,7 @@
 - Demo video: to be updated
 - Presentation video (YouTube): to be updated
 - Report PDF: [assignment_1/report.pdf](assignment_1/report.pdf)
-- Landing Page: [index.html](../index.html)
+- Landing Page: [https://hhoanggt.github.io/DL-for-CV/](https://hhoanggt.github.io/DL-for-CV/)
 
 The source code is organized into 3 independent parts:
 

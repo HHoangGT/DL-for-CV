@@ -14,7 +14,7 @@ const CONTENT = {
 		assignment_1: {
 			title: "Assignment 1 - Deep Learning for Computer Vision",
 			report: "assignment_1/report.pdf",
-			readme: "assignment_1/README.md",
+			readme: "https://github.com/HHoangGT/DL-for-CV/tree/main/assignment_1",
 			youtube: "https://www.youtube.com/",
 			info: [
 				"Assignment 1 is organized into 3 independent parts: image classification, text classification, and multimodal classification.",

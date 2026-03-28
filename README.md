@@ -4,7 +4,7 @@ Course repository for Deep Learning for Computer Vision assignments.
 
 ## Team
 
-**Group 13** [Landing Page](index.html)
+**Group 13** [Landing Page](https://hhoanggt.github.io/DL-for-CV/)
 
 
 | Member | Student ID |
