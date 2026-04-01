@@ -155,6 +155,8 @@ src/optimized_programs/
 # Part 4 local data/results
 excercises/part-4/cifar10_part34_project/data/
 excercises/part-4/cifar10_part34_project/results/
+excercise/part-4/cifar10_part34_project/data/
+excercise/part-4/cifar10_part34_project/results/
 
 # Large local assignment folders
 assignment_1/food101_project/
