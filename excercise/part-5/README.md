@@ -86,7 +86,7 @@ Key objectives:
   </div>
   <div style="flex: 1; min-width: 320px;">
     <p><strong>Column-wise training curve</strong></p>
-    <img src="report/images/column_img_1.png" alt="Column-wise training curves" width="100%" />
+    <img src="report/images/column_img_2.png" alt="Column-wise training curves" width="100%" />
   </div>
   <div style="flex: 1; min-width: 320px;">
     <p><strong>Patch-wise training curve</strong></p>
@@ -99,26 +99,28 @@ Key objectives:
 </div>
 
 ### Confusion matrices
-<div style="display: flex; flex-wrap: wrap; gap: 12px;">
-  <div style="flex: 1; min-width: 320px;">
-    <p><strong>Row-wise</strong></p>
-    <img src="report/images/row_img_3.png" alt="Row-wise confusion" width="100%" />
-  </div>
-  <div style="flex: 1; min-width: 320px;">
-    <p><strong>Column-wise</strong></p>
-    <img src="report/images/column_img_3.png" alt="Column-wise confusion" width="100%" />
-  </div>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px;">
-  <div style="flex: 1; min-width: 320px;">
-    <p><strong>Patch-wise</strong></p>
-    <img src="report/images/patch_img_4.png" alt="Patch-wise confusion" width="100%" />
-  </div>
-  <div style="flex: 1; min-width: 320px;">
-    <p><strong>GRU</strong></p>
-    <img src="report/images/gru_confusion_matrix.png" alt="GRU confusion" width="100%" />
-  </div>
-</div>
+<table style="width:100%; border-collapse: collapse;">
+  <tr>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>Row-wise</strong></p>
+      <img src="report/images/row_img_3.png" alt="Row-wise confusion" style="width:100%" />
+    </td>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>Column-wise</strong></p>
+      <img src="report/images/column_img_3.png" alt="Column-wise confusion" style="width:100%" />
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>Patch-wise</strong></p>
+      <img src="report/images/patch_img_4.png" alt="Patch-wise confusion" style="width:100%" />
+    </td>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>GRU</strong></p>
+      <img src="report/images/gru_confusion_matrix.png" alt="GRU confusion" style="width:100%" />
+    </td>
+  </tr>
+</table>
 
 ### Attention heatmaps
 - Row-wise: ![Row-wise attention](report/images/row_img_4.png)
