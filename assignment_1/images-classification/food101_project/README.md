@@ -1,6 +1,6 @@
 # Food-101 Image Classification Project (CNN vs ViT)
 
-This project is designed to satisfy the **image classification** branch of the CO5085 assignment.  
+This project is designed to satisfy the **image classification** branch of the CO5085 assignment.
 It focuses on building, training, evaluating, and comparing deep learning models on the **Food-101** dataset.
 
 The project includes:
@@ -19,7 +19,7 @@ The project includes:
   - **error analysis**
   - **Gradio demo application**
 
----
+______________________________________________________________________
 
 # 1. Project objective
 
@@ -35,7 +35,7 @@ This project compares two representative approaches in computer vision:
 
 The comparison helps analyze differences between local feature learning (CNN) and global attention-based representation learning (ViT).
 
----
+______________________________________________________________________
 
 # 2. Expected dataset structure
 
@@ -490,3 +490,4 @@ exporting best predictions and examples for the final report
 
 This project focuses only on the image classification branch of the assignment.
 The text classification and multimodal classification branches are handled separately by other teammates.
+```

@@ -105,17 +105,17 @@ Mô hình sử dụng mạng Bi-directional hai tầng với kích thước vect
         \node[block, right=of lstm1] (lstm2) {RNN Unit\\ $t=2$};
         \node[right=of lstm2] (dots) {$\dots$};
         \node[block, right=of dots] (lstmT) {RNN Unit\\ $t=T$};
-        
+
         \node[below=of lstm1] (x1) {$x_1$};
         \node[below=of lstm2] (x2) {$x_2$};
         \node[below=of lstmT] (xT) {$x_T$};
-        
+
         \node[above=of lstm1] (h1) {$h_1$};
         \node[above=of lstm2] (h2) {$h_2$};
         \node[above=of lstmT] (hT) {$h_T$};
-        
+
         \node[left=of lstm1] (c0) {$h_0$};
-        
+
         \draw[arrow] (c0) -- (lstm1);
         \draw[arrow] (lstm1) -- (lstm2);
         \draw[arrow] (lstm2) -- (dots);

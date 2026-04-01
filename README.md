@@ -6,13 +6,12 @@ Course repository for Deep Learning for Computer Vision assignments.
 
 **Group 13** [Landing Page](https://hhoanggt.github.io/DL-for-CV/)
 
-
-| Member | Student ID |
-| --- | --- |
-| Le Duc Phuong | 2570480 |
-| Nguyen Dinh Khanh | 2570227 |
-| Nguyen Huy Hoang | 2570089 |
-| Nguyen Huynh Nhu | 2570471 |
+| Member            | Student ID |
+| ----------------- | ---------- |
+| Le Duc Phuong     | 2570480    |
+| Nguyen Dinh Khanh | 2570227    |
+| Nguyen Huy Hoang  | 2570089    |
+| Nguyen Huynh Nhu  | 2570471    |
 
 **Instructor:** Dr. Le Thanh Sach
 

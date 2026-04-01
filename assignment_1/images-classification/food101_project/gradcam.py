@@ -44,7 +44,9 @@ class GradCAM:
         weights = self.gradients.mean(dim=(2, 3), keepdim=True)
         cam = (weights * self.activations).sum(dim=1, keepdim=True)
         cam = torch.relu(cam)
-        cam = torch.nn.functional.interpolate(cam, size=x.shape[-2:], mode='bilinear', align_corners=False)
+        cam = torch.nn.functional.interpolate(
+            cam, size=x.shape[-2:], mode="bilinear", align_corners=False
+        )
         cam = cam.squeeze().cpu().numpy()
         cam = cam - cam.min()
         cam = cam / (cam.max() + 1e-8)
@@ -52,13 +54,15 @@ class GradCAM:
 
 
 def load_image(image_path: str):
-    image = Image.open(image_path).convert('RGB')
+    image = Image.open(image_path).convert("RGB")
     transform = transforms.Compose(
         [
             transforms.Resize((256, 256)),
             transforms.CenterCrop(IMG_SIZE),
             transforms.ToTensor(),
-            transforms.Normalize(mean=IMAGENET_MEAN.tolist(), std=IMAGENET_STD.tolist()),
+            transforms.Normalize(
+                mean=IMAGENET_MEAN.tolist(), std=IMAGENET_STD.tolist()
+            ),
         ]
     )
     tensor = transform(image).unsqueeze(0)
@@ -67,11 +71,13 @@ def load_image(image_path: str):
 
 
 def get_target_layer(model, model_name: str):
-    if model_name == 'resnet50':
+    if model_name == "resnet50":
         return model.layer4[-1].conv3
-    if model_name == 'efficientnet_b0':
+    if model_name == "efficientnet_b0":
         return model.features[-1][0]
-    raise ValueError('Grad-CAM hiện chỉ hỗ trợ resnet50 và efficientnet_b0. Với ViT, bạn có thể dùng attention visualization như phần mở rộng khác.')
+    raise ValueError(
+        "Grad-CAM hiện chỉ hỗ trợ resnet50 và efficientnet_b0. Với ViT, bạn có thể dùng attention visualization như phần mở rộng khác."
+    )
 
 
 def overlay_heatmap(image: np.ndarray, cam_map: np.ndarray) -> np.ndarray:
@@ -81,19 +87,28 @@ def overlay_heatmap(image: np.ndarray, cam_map: np.ndarray) -> np.ndarray:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Grad-CAM for Food-101 CNN models')
-    parser.add_argument('--image_path', type=str, required=True)
-    parser.add_argument('--checkpoint', type=str, required=True)
-    parser.add_argument('--model_name', type=str, required=True, choices=['resnet50', 'efficientnet_b0'])
-    parser.add_argument('--num_classes', type=int, default=101)
-    parser.add_argument('--class_idx', type=int, default=-1)
-    parser.add_argument('--output_path', type=str, default='outputs/reports/gradcam_overlay.png')
+    parser = argparse.ArgumentParser(description="Grad-CAM for Food-101 CNN models")
+    parser.add_argument("--image_path", type=str, required=True)
+    parser.add_argument("--checkpoint", type=str, required=True)
+    parser.add_argument(
+        "--model_name", type=str, required=True, choices=["resnet50", "efficientnet_b0"]
+    )
+    parser.add_argument("--num_classes", type=int, default=101)
+    parser.add_argument("--class_idx", type=int, default=-1)
+    parser.add_argument(
+        "--output_path", type=str, default="outputs/reports/gradcam_overlay.png"
+    )
     args = parser.parse_args()
 
     device = get_device()
-    model = build_model(args.model_name, num_classes=args.num_classes, pretrained=False, freeze_backbone=False)
+    model = build_model(
+        args.model_name,
+        num_classes=args.num_classes,
+        pretrained=False,
+        freeze_backbone=False,
+    )
     checkpoint = torch.load(args.checkpoint, map_location=device)
-    model.load_state_dict(checkpoint['model_state_dict'])
+    model.load_state_dict(checkpoint["model_state_dict"])
     model.to(device)
     model.eval()
 
@@ -112,19 +127,19 @@ def main():
     fig = plt.figure(figsize=(10, 4))
     ax1 = fig.add_subplot(1, 2, 1)
     ax1.imshow(display)
-    ax1.set_title('Original image')
-    ax1.axis('off')
+    ax1.set_title("Original image")
+    ax1.axis("off")
 
     ax2 = fig.add_subplot(1, 2, 2)
     ax2.imshow(overlay)
-    ax2.set_title(f'Grad-CAM (class idx={pred_idx})')
-    ax2.axis('off')
+    ax2.set_title(f"Grad-CAM (class idx={pred_idx})")
+    ax2.axis("off")
 
     plt.tight_layout()
-    plt.savefig(out_path, dpi=200, bbox_inches='tight')
+    plt.savefig(out_path, dpi=200, bbox_inches="tight")
     plt.close(fig)
-    print(f'Saved Grad-CAM figure to: {out_path}')
+    print(f"Saved Grad-CAM figure to: {out_path}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

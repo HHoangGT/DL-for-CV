@@ -29,8 +29,16 @@ class CNNBackbone(nn.Module):
 
 
 class CNNTransformer(nn.Module):
-    def __init__(self, num_classes: int = 10, image_size: int = 32, embed_dim: int = 128,
-                 depth: int = 3, num_heads: int = 4, mlp_ratio: float = 2.0, dropout: float = 0.1):
+    def __init__(
+        self,
+        num_classes: int = 10,
+        image_size: int = 32,
+        embed_dim: int = 128,
+        depth: int = 3,
+        num_heads: int = 4,
+        mlp_ratio: float = 2.0,
+        dropout: float = 0.1,
+    ):
         super().__init__()
         self.backbone = CNNBackbone(embed_dim=embed_dim)
 
@@ -41,7 +49,13 @@ class CNNTransformer(nn.Module):
 
         self.pos_embed = nn.Parameter(torch.zeros(1, num_tokens, embed_dim))
         self.dropout = nn.Dropout(dropout)
-        self.encoder = TransformerEncoder(depth=depth, dim=embed_dim, num_heads=num_heads, mlp_ratio=mlp_ratio, dropout=dropout)
+        self.encoder = TransformerEncoder(
+            depth=depth,
+            dim=embed_dim,
+            num_heads=num_heads,
+            mlp_ratio=mlp_ratio,
+            dropout=dropout,
+        )
         self.head = nn.Linear(embed_dim, num_classes)
 
         nn.init.trunc_normal_(self.pos_embed, std=0.02)
@@ -49,7 +63,7 @@ class CNNTransformer(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.backbone(x)
         x = x.flatten(2).transpose(1, 2)
-        x = x + self.pos_embed[:, :x.size(1)]
+        x = x + self.pos_embed[:, : x.size(1)]
         x = self.dropout(x)
         x = self.encoder(x)
         x = x.mean(dim=1)

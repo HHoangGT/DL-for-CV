@@ -11,7 +11,7 @@
 
 **Supervisor:** Dr. Lê Thành Sách
 
----
+______________________________________________________________________
 
 ## Project Resources
 
@@ -26,7 +26,7 @@ The source code is organized into 3 independent parts:
 - Emotion/Text Classification: `text-classification/`
 - Multimodal Classification: `multi-modal-classification/`
 
----
+______________________________________________________________________
 
 ## 1) Image Classification
 
@@ -97,7 +97,7 @@ python train.py --models resnet50 vit_b_16 --epochs 8 --batch_size 16 --run_name
 python run_experiments.py --models resnet50 vit_b_16 --epochs 8 --batch_size 16
 ```
 
----
+______________________________________________________________________
 
 ## 2) Text Classification
 
@@ -164,7 +164,7 @@ streamlit run streamlit_app.py
 
 <img src="docs/2.demotext_demo.png" alt="Text classification demo" width="70%" />
 
----
+______________________________________________________________________
 
 ## 3) Multimodal Approach
 
@@ -186,7 +186,8 @@ Detailed documentation:
 - Build a text classifier using prompt templates for zero-shot inference.
 - Sample few-shot data based on the number of examples per class.
 - Standardize evaluation with accuracy/F1/precision/recall.
-<img src="docs/3.multi.png" alt="Multimodal results" width="70%" />
+  <img src="docs/3.multi.png" alt="Multimodal results" width="70%" />
+
 ### 3.3 Zero-shot Classification Approach
 
 - No training on target labeled data is required.
@@ -231,10 +232,7 @@ python run_all.py --mode wise_ft
 
 <img src="docs/3.OpenCLIP.png" alt="OpenCLIP pipeline" width="70%" />
 
-
-
-
----
+______________________________________________________________________
 
 ## 4) Summary
 

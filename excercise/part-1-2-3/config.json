@@ -1,0 +1,20 @@
+{
+    "dataset": {
+        "name": "cifar10",
+        "batch_size": 256,
+        "num_workers": 0
+    },
+    "training": {
+        "epochs": 100,
+        "early_stopping_patience": 5,
+        "learning_rate": 0.001,
+        "device": "cuda"
+    },
+    "models_to_run": {
+        "softmax": true,
+        "mlp": true,
+        "cnn": true,
+        "vit_pytorch": true,
+        "vit_custom": true
+    }
+}

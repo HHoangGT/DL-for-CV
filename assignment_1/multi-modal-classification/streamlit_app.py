@@ -5,7 +5,6 @@ from urllib.request import urlopen
 
 import numpy as np
 import open_clip
-import pandas as pd
 import streamlit as st
 import torch
 from PIL import Image
@@ -136,9 +135,7 @@ def render_source_table_with_thumbs():
         key="source_grid_cols",
     )
 
-    thumb_urls = [
-        build_picsum_url(sample["url"], 200, 200) for sample in SAMPLE_IMAGES
-    ]
+    thumb_urls = [build_picsum_url(sample["url"], 200, 200) for sample in SAMPLE_IMAGES]
 
     for start in range(0, len(SAMPLE_IMAGES), num_cols):
         row_samples = SAMPLE_IMAGES[start : start + num_cols]
@@ -157,7 +154,9 @@ def main():
         layout="wide",
     )
     st.title("Multimodal - Đa phương thức")
-    st.caption("Type a text query and retrieve the most relevant images from a blurry-image gallery.")
+    st.caption(
+        "Type a text query and retrieve the most relevant images from a blurry-image gallery."
+    )
 
     device = get_device()
     st.info(f"Device: {device}")
@@ -174,7 +173,9 @@ def main():
     if "retrieval_gallery_version" not in st.session_state:
         st.session_state["retrieval_gallery_version"] = None
 
-    with st.expander("Default gallery sources (20 multi-object images)", expanded=False):
+    with st.expander(
+        "Default gallery sources (20 multi-object images)", expanded=False
+    ):
         render_source_table_with_thumbs()
 
     st.caption(f"Using local checkpoint: {WISE_FT_CHECKPOINT.name}")
@@ -211,7 +212,10 @@ def main():
 
         # Build/refresh gallery automatically when empty or image set changes.
         gallery_version = "sample_images_v2_20"
-        if not gallery or st.session_state.get("retrieval_gallery_version") != gallery_version:
+        if (
+            not gallery
+            or st.session_state.get("retrieval_gallery_version") != gallery_version
+        ):
             status_box.info("Step 2/4: Building image gallery embeddings...")
             new_gallery = []
             failed = []
@@ -284,7 +288,10 @@ def main():
         for i, idx in enumerate(ranked_idx[: len(cols)]):
             item = gallery[int(idx)]
             with cols[i]:
-                st.image(item["image"], caption=f"#{i + 1} | {item['name']} | {scores[int(idx)]:.3f}")
+                st.image(
+                    item["image"],
+                    caption=f"#{i + 1} | {item['name']} | {scores[int(idx)]:.3f}",
+                )
 
 
 if __name__ == "__main__":
