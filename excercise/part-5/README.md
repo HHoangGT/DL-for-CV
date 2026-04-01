@@ -79,13 +79,46 @@ Key objectives:
 | GRU | Patch-wise | 79.87% | 511,883 | ~11.9s |
 
 ### Training curves
-![Training curves](report/images/gru_learning_curves.png)
+<div style="display: flex; flex-wrap: wrap; gap: 12px;">
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Row-wise training curve</strong></p>
+    <img src="report/images/row_img_2.png" alt="Row-wise training curves" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Column-wise training curve</strong></p>
+    <img src="report/images/column_img_1.png" alt="Column-wise training curves" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Patch-wise training curve</strong></p>
+    <img src="report/images/patch_img_3.png" alt="Patch-wise training curves" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>GRU training curve</strong></p>
+    <img src="report/images/gru_learning_curves.png" alt="GRU training curves" width="100%" />
+  </div>
+</div>
 
 ### Confusion matrices
-- Row-wise: ![Row-wise confusion](report/images/row_img_3.png)
-- Column-wise: ![Column-wise confusion](report/images/column_img_3.png)
-- Patch-wise: ![Patch-wise confusion](report/images/patch_img_4.png)
-- GRU: ![GRU confusion](report/images/gru_confusion_matrix.png)
+<div style="display: flex; flex-wrap: wrap; gap: 12px;">
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Row-wise</strong></p>
+    <img src="report/images/row_img_3.png" alt="Row-wise confusion" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Column-wise</strong></p>
+    <img src="report/images/column_img_3.png" alt="Column-wise confusion" width="100%" />
+  </div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px;">
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Patch-wise</strong></p>
+    <img src="report/images/patch_img_4.png" alt="Patch-wise confusion" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>GRU</strong></p>
+    <img src="report/images/gru_confusion_matrix.png" alt="GRU confusion" width="100%" />
+  </div>
+</div>
 
 ### Attention heatmaps
 - Row-wise: ![Row-wise attention](report/images/row_img_4.png)
