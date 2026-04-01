@@ -75,7 +75,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
 
 # IPython
 profile_default/
@@ -85,10 +85,6 @@ ipython_config.py
 .python-version
 
 # pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
 #Pipfile.lock
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
@@ -150,3 +146,16 @@ test_main.http
 *.env
 requirements-dev.txt
 src/optimized_programs/
+
+# Large model files
+*.pth
+*.pt
+*.ckpt
+
+# Part 4 local data/results
+excercises/part-4/cifar10_part34_project/data/
+excercises/part-4/cifar10_part34_project/results/
+
+# Large local assignment folders
+assignment_1/food101_project/
+assignment_1/text-classification/models/
