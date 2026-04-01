@@ -15,6 +15,9 @@ Key objectives:
   - Training augmentation: random horizontal flip
   - Normalization: mean = (0.4914, 0.4822, 0.4465), std = (0.2470, 0.2435, 0.2616)
 
+#### Data distribution (example images)
+![CIFAR-10 examples](report/images/CIFAR-10_examples.png)
+
 ## 3. Repository Layout
 - `excercise/part-5/notebooks/`: Analysis notebooks, data extraction scripts, visualization pipelines
 - `excercise/part-5/report/`: Final report (`LSTM_CIFAR10_Report.tex`) and generated figures
@@ -57,6 +60,8 @@ Key objectives:
 - Column-wise: reshape to (W, H, C), same T=32, D=96
 - Patch-wise: non-overlapping 4x4 patches, T=64, D=48
 
+![Sequence conversion methods](report/images/three_type_of_sequences.png)
+
 ### Model topology
 - Dual-layer Bi-directional LSTM/GRU + attention + final classification head
 - Output layer: Linear -> Softmax over 10 classes
@@ -73,9 +78,52 @@ Key objectives:
 | LSTM | Patch-wise | 79.28% | 741,899 | ~16.8s |
 | GRU | Patch-wise | 79.87% | 511,883 | ~11.9s |
 
-### Figures
-1. `images/three_type_of_sequences.png` - row/column/patch conversion schematic
-2. `images/row_img_2.png`, `images/column_img_2.png`, `images/patch_img_3.png`, `images/gru_learning_curves.png` - loss/accuracy curves
-3. `images/row_img_3.png`, `images/column_img_3.png`, `images/patch_img_4.png`, `images/gru_confusion_matrix.png` - confusion matrices
-4. `images/row_img_4.png`, `images/column_img_4.png`, `images/patch_img_5.png`, `images/gru_patch_attention.png` - attention heatmaps
+### Training curves
+<div style="display: flex; flex-wrap: wrap; gap: 12px;">
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Row-wise training curve</strong></p>
+    <img src="report/images/row_img_2.png" alt="Row-wise training curves" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Column-wise training curve</strong></p>
+    <img src="report/images/column_img_2.png" alt="Column-wise training curves" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>Patch-wise training curve</strong></p>
+    <img src="report/images/patch_img_3.png" alt="Patch-wise training curves" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 320px;">
+    <p><strong>GRU training curve</strong></p>
+    <img src="report/images/gru_learning_curves.png" alt="GRU training curves" width="100%" />
+  </div>
+</div>
 
+### Confusion matrices
+<table style="width:100%; border-collapse: collapse;">
+  <tr>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>Row-wise</strong></p>
+      <img src="report/images/row_img_3.png" alt="Row-wise confusion" style="width:100%" />
+    </td>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>Column-wise</strong></p>
+      <img src="report/images/column_img_3.png" alt="Column-wise confusion" style="width:100%" />
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>Patch-wise</strong></p>
+      <img src="report/images/patch_img_4.png" alt="Patch-wise confusion" style="width:100%" />
+    </td>
+    <td style="width: 50%; padding: 4px; vertical-align: top;">
+      <p><strong>GRU</strong></p>
+      <img src="report/images/gru_confusion_matrix.png" alt="GRU confusion" style="width:100%" />
+    </td>
+  </tr>
+</table>
+
+### Attention heatmaps
+- Row-wise: ![Row-wise attention](report/images/row_img_4.png)
+- Column-wise: ![Column-wise attention](report/images/column_img_4.png)
+- Patch-wise: ![Patch-wise attention](report/images/patch_img_5.png)
+- GRU: ![GRU patch attention](report/images/gru_patch_attention.png)
