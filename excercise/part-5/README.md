@@ -16,7 +16,7 @@ Key objectives:
   - Normalization: mean = (0.4914, 0.4822, 0.4465), std = (0.2470, 0.2435, 0.2616)
 
 #### Data distribution (example images)
-![CIFAR-10 examples](images/CIFAR-10_examples.png)
+![CIFAR-10 examples](report/images/CIFAR-10_examples.png)
 
 ## 3. Repository Layout
 - `excercise/part-5/notebooks/`: Analysis notebooks, data extraction scripts, visualization pipelines
@@ -60,7 +60,7 @@ Key objectives:
 - Column-wise: reshape to (W, H, C), same T=32, D=96
 - Patch-wise: non-overlapping 4x4 patches, T=64, D=48
 
-![Sequence conversion methods](images/three_type_of_sequences.png)
+![Sequence conversion methods](report/images/three_type_of_sequences.png)
 
 ### Model topology
 - Dual-layer Bi-directional LSTM/GRU + attention + final classification head
@@ -79,22 +79,16 @@ Key objectives:
 | GRU | Patch-wise | 79.87% | 511,883 | ~11.9s |
 
 ### Training curves
-![Training curves](images/gru_learning_curves.png)
+![Training curves](report/images/gru_learning_curves.png)
 
 ### Confusion matrices
-- Row-wise: ![Row-wise confusion](images/row_img_3.png)
-- Column-wise: ![Column-wise confusion](images/column_img_3.png)
-- Patch-wise: ![Patch-wise confusion](images/patch_img_4.png)
-- GRU: ![GRU confusion](images/gru_confusion_matrix.png)
+- Row-wise: ![Row-wise confusion](report/images/row_img_3.png)
+- Column-wise: ![Column-wise confusion](report/images/column_img_3.png)
+- Patch-wise: ![Patch-wise confusion](report/images/patch_img_4.png)
+- GRU: ![GRU confusion](report/images/gru_confusion_matrix.png)
 
 ### Attention heatmaps
-- Row-wise: ![Row-wise attention](images/row_img_4.png)
-- Column-wise: ![Column-wise attention](images/column_img_4.png)
-- Patch-wise: ![Patch-wise attention](images/patch_img_5.png)
-- GRU: ![GRU patch attention](images/gru_patch_attention.png)
-
-## 7. Notes
-- The report is in `excercise/part-5/report/LSTM_CIFAR10_Report.tex` and compiles with XeLaTeX.
-- If required, re-execute the notebook to regenerate all images and metrics for higher fidelity reproduction.
-- Use GPU for training to reduce runtime and ensure model convergence within practical window.
-
+- Row-wise: ![Row-wise attention](report/images/row_img_4.png)
+- Column-wise: ![Column-wise attention](report/images/column_img_4.png)
+- Patch-wise: ![Patch-wise attention](report/images/patch_img_5.png)
+- GRU: ![GRU patch attention](report/images/gru_patch_attention.png)
