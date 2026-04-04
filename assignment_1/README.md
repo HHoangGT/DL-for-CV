@@ -15,8 +15,8 @@ ______________________________________________________________________
 
 ## Project Resources
 
-- Demo video: to be updated
-- Presentation video (YouTube): to be updated
+- Demo video (YouTube): <https://youtu.be/9KDi4yDItBk>
+- Presentation video (YouTube): <https://youtu.be/7qu4bMMTxa0>
 - Report PDF: [assignment_1/report.pdf](assignment_1/report.pdf)
 - Landing Page: [https://hhoanggt.github.io/DL-for-CV/](https://hhoanggt.github.io/DL-for-CV/)
 
