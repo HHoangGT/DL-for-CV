@@ -3,11 +3,11 @@
 
 This project is prepared for **CO5085 - Deep Learning and Applications in Computer Vision**.
 
-### Scope of work (Khánh)
+### Scope of work
 Keep the **segmentation architecture fixed as DeepLabV3+** and compare three different backbones:
 - `resnet50`
 - `convnext_tiny`
-- `mit_b0`
+- `swin_tiny`
 
 ### Dataset
 Target dataset: **Pascal VOC 2012 semantic segmentation** (image + segmentation mask).
