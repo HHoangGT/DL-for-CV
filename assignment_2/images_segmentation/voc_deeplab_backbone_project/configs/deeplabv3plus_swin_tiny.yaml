@@ -1,0 +1,9 @@
+_base_: base.yaml
+experiment_name: deeplabv3plus_swin_tiny
+
+model:
+  backbone: swin_tiny_patch4_window7_224
+  backbone_pretrained: true
+
+system:
+  num_workers: 0
