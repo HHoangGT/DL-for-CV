@@ -79,9 +79,9 @@ python -m src.train --config configs/deeplabv3plus_resnet50.yaml
 python -m src.train --config configs/deeplabv3plus_convnext_tiny.yaml
 ```
 
-### MiT-B0
+### Swin-Tiny
 ```bash
-python -m src.train --config configs/deeplabv3plus_mit_b0.yaml
+python -m src.train --config configs/deeplabv3plus_swin_tiny.yaml
 ```
 
 Each run will create an experiment folder under `artifacts/experiments/<exp_name>/` containing:
