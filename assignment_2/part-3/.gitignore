@@ -1,0 +1,14 @@
+# Virtual Environments
+venv/
+env/
+.env
+
+# Data & Output generated files
+outputs/
+data/
+__pycache__/
+*.ipynb_checkpoints/
+
+# Ngoại lệ: Buộc Git phải công nhận đuôi .pth trong thư mục models 
+# (Vì file .gitignore ở thư mục gốc của repo đang chặn toàn bộ *.pth)
+!models/*.pth
