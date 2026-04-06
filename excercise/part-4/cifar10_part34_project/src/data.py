@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Tuple
 
 import pandas as pd
 import torch
@@ -19,7 +18,9 @@ class KaggleCIFAR10TrainDataset(Dataset):
         # Kaggle CIFAR-10 labels are strings, so map them to integer ids
         classes = sorted(self.labels_df["label"].unique().tolist())
         self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(classes)}
-        self.idx_to_class = {idx: cls_name for cls_name, idx in self.class_to_idx.items()}
+        self.idx_to_class = {
+            idx: cls_name for cls_name, idx in self.class_to_idx.items()
+        }
 
         self.samples = []
         for _, row in self.labels_df.iterrows():
@@ -49,8 +50,7 @@ class KaggleCIFAR10TestDataset(Dataset):
 
         # Sort numerically: 1.png, 2.png, 3.png, ...
         self.image_paths = sorted(
-            self.image_dir.glob("*.png"),
-            key=lambda p: int(p.stem)
+            self.image_dir.glob("*.png"), key=lambda p: int(p.stem)
         )
 
     def __len__(self) -> int:
@@ -69,17 +69,21 @@ class KaggleCIFAR10TestDataset(Dataset):
 
 
 def build_transforms():
-    train_transform = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD),
-    ])
+    train_transform = transforms.Compose(
+        [
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD),
+        ]
+    )
 
-    test_transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD),
-    ])
+    test_transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize(CIFAR10_MEAN, CIFAR10_STD),
+        ]
+    )
     return train_transform, test_transform
 
 
@@ -88,7 +92,7 @@ def create_dataloaders(
     num_workers: int = 2,
     val_split: float = 0.1,
     seed: int = 42,
-) -> Tuple[DataLoader, DataLoader, DataLoader]:
+) -> tuple[DataLoader, DataLoader, DataLoader]:
     train_transform, test_transform = build_transforms()
 
     train_dir = "./data/train"

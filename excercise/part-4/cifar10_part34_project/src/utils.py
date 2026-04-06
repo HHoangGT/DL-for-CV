@@ -1,8 +1,7 @@
 import json
-import os
 import random
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 import torch
@@ -19,8 +18,8 @@ def set_seed(seed: int) -> None:
     torch.cuda.manual_seed_all(seed)
 
 
-def load_config(path: str) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
+def load_config(path: str) -> dict[str, Any]:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -30,7 +29,7 @@ def ensure_dir(path: str | Path) -> Path:
     return p
 
 
-def save_json(data: Dict[str, Any], path: str | Path) -> None:
+def save_json(data: dict[str, Any], path: str | Path) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 

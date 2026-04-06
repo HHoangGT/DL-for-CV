@@ -10,7 +10,14 @@ from src.engine import fit
 from src.models.cnn_transformer import CNNTransformer
 from src.models.vit_overlap import ViTOverlap
 from src.models.vit_patch import ViTPatch
-from src.utils import count_parameters, ensure_dir, get_device, load_config, save_json, set_seed
+from src.utils import (
+    count_parameters,
+    ensure_dir,
+    get_device,
+    load_config,
+    save_json,
+    set_seed,
+)
 
 
 MODEL_REGISTRY = {
@@ -66,7 +73,14 @@ def save_history_csv(history, csv_path: Path):
     fieldnames = (
         list(history[0].keys())
         if history
-        else ["epoch", "train_loss", "train_acc", "val_loss", "val_acc", "epoch_time_sec"]
+        else [
+            "epoch",
+            "train_loss",
+            "train_acc",
+            "val_loss",
+            "val_acc",
+            "epoch_time_sec",
+        ]
     )
 
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -133,9 +147,15 @@ def main():
 
     metrics = {
         "best_val_acc": float(best_val_acc),
-        "best_val_loss": float(best_epoch["val_loss"]) if best_epoch is not None else None,
-        "best_train_acc_at_best_val": float(best_epoch["train_acc"]) if best_epoch is not None else None,
-        "best_train_loss_at_best_val": float(best_epoch["train_loss"]) if best_epoch is not None else None,
+        "best_val_loss": float(best_epoch["val_loss"])
+        if best_epoch is not None
+        else None,
+        "best_train_acc_at_best_val": float(best_epoch["train_acc"])
+        if best_epoch is not None
+        else None,
+        "best_train_loss_at_best_val": float(best_epoch["train_loss"])
+        if best_epoch is not None
+        else None,
         "best_epoch": int(best_epoch["epoch"]) if best_epoch is not None else None,
         "num_parameters": count_parameters(model),
         "device": str(device),

@@ -5,15 +5,15 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 
-
 def load_history(csv_path: Path):
     rows = []
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            rows.append({k: float(v) if k != "epoch" else int(v) for k, v in row.items()})
+            rows.append(
+                {k: float(v) if k != "epoch" else int(v) for k, v in row.items()}
+            )
     return rows
-
 
 
 def plot_metric(run_dirs, metric_name, output_path):
@@ -30,7 +30,6 @@ def plot_metric(run_dirs, metric_name, output_path):
     plt.tight_layout()
     plt.savefig(output_path)
     plt.close()
-
 
 
 def main():

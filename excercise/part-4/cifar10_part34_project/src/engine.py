@@ -1,5 +1,4 @@
 import time
-from typing import Dict, List
 
 import torch
 from torch import nn
@@ -7,8 +6,9 @@ from torch import nn
 from src.utils import AverageMeter, accuracy
 
 
-
-def train_one_epoch(model: nn.Module, loader, optimizer, criterion, device: torch.device) -> Dict[str, float]:
+def train_one_epoch(
+    model: nn.Module, loader, optimizer, criterion, device: torch.device
+) -> dict[str, float]:
     model.train()
     loss_meter = AverageMeter()
     acc_meter = AverageMeter()
@@ -31,7 +31,9 @@ def train_one_epoch(model: nn.Module, loader, optimizer, criterion, device: torc
 
 
 @torch.no_grad()
-def evaluate(model: nn.Module, loader, criterion, device: torch.device) -> Dict[str, float]:
+def evaluate(
+    model: nn.Module, loader, criterion, device: torch.device
+) -> dict[str, float]:
     model.eval()
     loss_meter = AverageMeter()
     acc_meter = AverageMeter()
@@ -50,15 +52,24 @@ def evaluate(model: nn.Module, loader, criterion, device: torch.device) -> Dict[
     return {"loss": loss_meter.avg, "acc": acc_meter.avg}
 
 
-
-def fit(model: nn.Module, train_loader, val_loader, optimizer, criterion, device: torch.device, epochs: int):
-    history: List[Dict[str, float]] = []
+def fit(
+    model: nn.Module,
+    train_loader,
+    val_loader,
+    optimizer,
+    criterion,
+    device: torch.device,
+    epochs: int,
+):
+    history: list[dict[str, float]] = []
     best_val_acc = -1.0
     best_state = None
 
     for epoch in range(1, epochs + 1):
         start_time = time.time()
-        train_metrics = train_one_epoch(model, train_loader, optimizer, criterion, device)
+        train_metrics = train_one_epoch(
+            model, train_loader, optimizer, criterion, device
+        )
         val_metrics = evaluate(model, val_loader, criterion, device)
         epoch_time = time.time() - start_time
 

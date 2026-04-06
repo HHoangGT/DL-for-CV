@@ -9,7 +9,6 @@ from src.utils import get_device, load_config
 from src.engine import evaluate
 
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=str, required=True)

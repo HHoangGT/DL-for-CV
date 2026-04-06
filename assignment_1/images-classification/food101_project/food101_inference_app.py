@@ -1,7 +1,6 @@
 import argparse
 import json
 from pathlib import Path
-from typing import List, Tuple, Optional
 
 import torch
 from PIL import Image
@@ -10,25 +9,107 @@ from torchvision import models, transforms
 
 IMAGE_SIZE = 224
 DEFAULT_CLASSES = [
-    'apple_pie', 'baby_back_ribs', 'baklava', 'beef_carpaccio', 'beef_tartare',
-    'beet_salad', 'beignets', 'bibimbap', 'bread_pudding', 'breakfast_burrito', 'bruschetta',
-    'caesar_salad', 'cannoli', 'caprese_salad', 'carrot_cake', 'ceviche',
-    'cheesecake', 'cheese_plate', 'chicken_curry', 'chicken_quesadilla',
-    'chicken_wings', 'chocolate_cake', 'chocolate_mousse', 'churros', 'clam_chowder',
-    'club_sandwich', 'crab_cakes', 'creme_brulee', 'croque_madame', 'cup_cakes',
-    'deviled_eggs', 'donuts', 'dumplings', 'edamame', 'eggs_benedict', 'escargots',
-    'falafel', 'filet_mignon', 'fish_and_chips', 'foie_gras', 'french_fries',
-    'french_onion_soup', 'french_toast', 'fried_calamari', 'fried_rice',
-    'frozen_yogurt', 'garlic_bread', 'gnocchi', 'greek_salad', 'grilled_cheese_sandwich',
-    'grilled_salmon', 'guacamole', 'gyoza', 'hamburger', 'hot_and_sour_soup',
-    'hot_dog', 'huevos_rancheros', 'hummus', 'ice_cream', 'lasagna', 'lobster_bisque',
-    'lobster_roll_sandwich', 'macaroni_and_cheese', 'macarons', 'miso_soup', 'mussels',
-    'nachos', 'omelette', 'onion_rings', 'oysters', 'pad_thai', 'paella', 'pancakes',
-    'panna_cotta', 'peking_duck', 'pho', 'pizza', 'pork_chop', 'poutine', 'prime_rib',
-    'pulled_pork_sandwich', 'ramen', 'ravioli', 'red_velvet_cake', 'risotto', 'samosa',
-    'sashimi', 'scallops', 'seaweed_salad', 'shrimp_and_grits', 'spaghetti_bolognese',
-    'spaghetti_carbonara', 'spring_rolls', 'steak', 'strawberry_shortcake', 'sushi',
-    'tacos', 'takoyaki', 'tiramisu', 'tuna_tartare', 'waffles'
+    "apple_pie",
+    "baby_back_ribs",
+    "baklava",
+    "beef_carpaccio",
+    "beef_tartare",
+    "beet_salad",
+    "beignets",
+    "bibimbap",
+    "bread_pudding",
+    "breakfast_burrito",
+    "bruschetta",
+    "caesar_salad",
+    "cannoli",
+    "caprese_salad",
+    "carrot_cake",
+    "ceviche",
+    "cheesecake",
+    "cheese_plate",
+    "chicken_curry",
+    "chicken_quesadilla",
+    "chicken_wings",
+    "chocolate_cake",
+    "chocolate_mousse",
+    "churros",
+    "clam_chowder",
+    "club_sandwich",
+    "crab_cakes",
+    "creme_brulee",
+    "croque_madame",
+    "cup_cakes",
+    "deviled_eggs",
+    "donuts",
+    "dumplings",
+    "edamame",
+    "eggs_benedict",
+    "escargots",
+    "falafel",
+    "filet_mignon",
+    "fish_and_chips",
+    "foie_gras",
+    "french_fries",
+    "french_onion_soup",
+    "french_toast",
+    "fried_calamari",
+    "fried_rice",
+    "frozen_yogurt",
+    "garlic_bread",
+    "gnocchi",
+    "greek_salad",
+    "grilled_cheese_sandwich",
+    "grilled_salmon",
+    "guacamole",
+    "gyoza",
+    "hamburger",
+    "hot_and_sour_soup",
+    "hot_dog",
+    "huevos_rancheros",
+    "hummus",
+    "ice_cream",
+    "lasagna",
+    "lobster_bisque",
+    "lobster_roll_sandwich",
+    "macaroni_and_cheese",
+    "macarons",
+    "miso_soup",
+    "mussels",
+    "nachos",
+    "omelette",
+    "onion_rings",
+    "oysters",
+    "pad_thai",
+    "paella",
+    "pancakes",
+    "panna_cotta",
+    "peking_duck",
+    "pho",
+    "pizza",
+    "pork_chop",
+    "poutine",
+    "prime_rib",
+    "pulled_pork_sandwich",
+    "ramen",
+    "ravioli",
+    "red_velvet_cake",
+    "risotto",
+    "samosa",
+    "sashimi",
+    "scallops",
+    "seaweed_salad",
+    "shrimp_and_grits",
+    "spaghetti_bolognese",
+    "spaghetti_carbonara",
+    "spring_rolls",
+    "steak",
+    "strawberry_shortcake",
+    "sushi",
+    "tacos",
+    "takoyaki",
+    "tiramisu",
+    "tuna_tartare",
+    "waffles",
 ]
 
 
@@ -41,16 +122,16 @@ def build_model(model_name: str, num_classes: int) -> torch.nn.Module:
         model = models.vit_b_16(weights=None)
         model.heads.head = torch.nn.Linear(model.heads.head.in_features, num_classes)
         return model
-    raise ValueError("Unsupported model: {}".format(model_name))
+    raise ValueError(f"Unsupported model: {model_name}")
 
 
-def load_classes(classes_path: Optional[str]) -> List[str]:
+def load_classes(classes_path: str | None) -> list[str]:
     if not classes_path:
         return DEFAULT_CLASSES
 
     path = Path(classes_path)
     if not path.exists():
-        raise FileNotFoundError("Class file not found: {}".format(path))
+        raise FileNotFoundError(f"Class file not found: {path}")
 
     if path.suffix.lower() == ".json":
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -60,12 +141,18 @@ def load_classes(classes_path: Optional[str]) -> List[str]:
             return data["classes"]
 
     if path.suffix.lower() in {".txt", ".csv"}:
-        return [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        return [
+            line.strip()
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
 
     raise ValueError("classes_path must be a .json, .txt, or .csv file")
 
 
-def load_checkpoint(model: torch.nn.Module, checkpoint_path: str, device: torch.device) -> torch.nn.Module:
+def load_checkpoint(
+    model: torch.nn.Module, checkpoint_path: str, device: torch.device
+) -> torch.nn.Module:
     ckpt = torch.load(checkpoint_path, map_location=device)
 
     if isinstance(ckpt, dict):
@@ -89,20 +176,22 @@ def load_checkpoint(model: torch.nn.Module, checkpoint_path: str, device: torch.
 
 
 def get_transform() -> transforms.Compose:
-    return transforms.Compose([
-        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
+    return transforms.Compose(
+        [
+            transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
 
 
 def predict_image(
-    image: Optional[Image.Image],
+    image: Image.Image | None,
     model: torch.nn.Module,
-    classes: List[str],
+    classes: list[str],
     device: torch.device,
     topk: int = 5,
-) -> Tuple[str, List[List[str]]]:
+) -> tuple[str, list[list[str]]]:
     if image is None:
         return "Chưa có ảnh được tải lên.", []
 
@@ -115,17 +204,21 @@ def predict_image(
         values, indices = torch.topk(probs, k=min(topk, len(classes)))
 
     top_rows = []
-    for rank, (score, idx) in enumerate(zip(values.tolist(), indices.tolist()), start=1):
-        label = classes[idx] if idx < len(classes) else "class_{}".format(idx)
-        top_rows.append([str(rank), label, "{:.2f}%".format(score * 100)])
+    for rank, (score, idx) in enumerate(
+        zip(values.tolist(), indices.tolist()), start=1
+    ):
+        label = classes[idx] if idx < len(classes) else f"class_{idx}"
+        top_rows.append([str(rank), label, f"{score * 100:.2f}%"])
 
     best_label = top_rows[0][1]
     best_score = top_rows[0][2]
-    summary = "Dự đoán cao nhất: {} ({})".format(best_label, best_score)
+    summary = f"Dự đoán cao nhất: {best_label} ({best_score})"
     return summary, top_rows
 
 
-def make_app(model_name: str, checkpoint_path: str, classes_path: Optional[str] = None) -> gr.Blocks:
+def make_app(
+    model_name: str, checkpoint_path: str, classes_path: str | None = None
+) -> gr.Blocks:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     classes = load_classes(classes_path)
     model = build_model(model_name, len(classes))
@@ -169,10 +262,18 @@ def make_app(model_name: str, checkpoint_path: str, classes_path: Optional[str] 
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Small Gradio app for Food-101 inference")
+    parser = argparse.ArgumentParser(
+        description="Small Gradio app for Food-101 inference"
+    )
     parser.add_argument("--model_name", choices=["resnet50", "vit_b_16"], required=True)
-    parser.add_argument("--checkpoint", required=True, help="Path to trained checkpoint (.pth)")
-    parser.add_argument("--classes_path", default=None, help="Optional path to class names (.json/.txt/.csv)")
+    parser.add_argument(
+        "--checkpoint", required=True, help="Path to trained checkpoint (.pth)"
+    )
+    parser.add_argument(
+        "--classes_path",
+        default=None,
+        help="Optional path to class names (.json/.txt/.csv)",
+    )
     parser.add_argument("--share", action="store_true")
     parser.add_argument("--server_port", type=int, default=7860)
     return parser.parse_args()

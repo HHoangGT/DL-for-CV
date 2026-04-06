@@ -1,0 +1,5 @@
+_base_: base.yaml
+experiment_name: deeplabv3plus_convnext_tiny
+model:
+  backbone: convnext_tiny
+  backbone_pretrained: true

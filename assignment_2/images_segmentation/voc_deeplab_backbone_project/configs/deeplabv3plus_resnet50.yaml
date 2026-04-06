@@ -1,0 +1,5 @@
+_base_: base.yaml
+experiment_name: deeplabv3plus_resnet50
+model:
+  backbone: resnet50
+  backbone_pretrained: true

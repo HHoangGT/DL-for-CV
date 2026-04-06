@@ -161,3 +161,30 @@ excercise/part-4/cifar10_part34_project/results/
 # Large local assignment folders
 assignment_1/food101_project/
 assignment_1/text-classification/models/
+
+# voc_deeplab_backbone_project
+assignment_2/images_segmentation/voc_deeplab_backbone_project/data/
+assignment_2/images_segmentation/voc_deeplab_backbone_project/artifacts/
+assignment_2/images_segmentation/voc_deeplab_backbone_project/reports/
+
+# checkpoints / weights
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.pkl
+*.joblib
+
+# generated outputs
+**/predictions/
+**/visualizations/
+**/inference_outputs/
+**/demo_outputs/
+
+# archives
+*.zip
+*.rar
+*.7z

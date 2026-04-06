@@ -1,8 +1,8 @@
+gradio
+matplotlib
+pandas
+Pillow
+scikit-learn
 torch
 torchvision
-scikit-learn
-pandas
-matplotlib
-Pillow
 tqdm
-gradio
