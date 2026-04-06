@@ -1,0 +1,9 @@
+# PyTorch Ecosystem
+torch
+torchvision
+
+# Image Processing & Utilities
+pillow
+numpy
+matplotlib
+pyyaml

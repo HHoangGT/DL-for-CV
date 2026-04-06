@@ -1,0 +1,4 @@
+# Configuration for Inference App
+task: instance # option: instance or semantic
+image: inputs/2009_002366.jpg
+threshold: 0.5
