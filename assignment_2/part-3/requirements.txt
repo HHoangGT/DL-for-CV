@@ -7,3 +7,6 @@ pillow
 numpy
 matplotlib
 pyyaml
+
+# Demo App
+streamlit
