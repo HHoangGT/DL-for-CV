@@ -188,3 +188,7 @@ assignment_2/images_segmentation/voc_deeplab_backbone_project/reports/
 *.zip
 *.rar
 *.7z
+
+# data
+*data/
+*checkpoints/
