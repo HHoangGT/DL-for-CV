@@ -30,10 +30,15 @@ MODEL_CONFIGS: Dict[str, str] = {
 DEFAULT_SAMPLE_NAME = "2007_003525.jpg"
 
 
+def _resolve(path: str | Path) -> Path:
+    path = Path(path)
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+
 def _default_checkpoint_paths(config_path: str) -> List[Path]:
-    cfg = load_config(config_path)
+    cfg = load_config(_resolve(config_path))
     exp_name = cfg.get("experiment_name", "")
-    exp_dir = Path("artifacts") / "experiments" / exp_name
+    exp_dir = PROJECT_ROOT / "artifacts" / "experiments" / exp_name
     return [
         exp_dir / "best.pt",
         exp_dir / "last.pt",
@@ -43,7 +48,7 @@ def _default_checkpoint_paths(config_path: str) -> List[Path]:
 
 def _discover_sample_images(max_images: int = 12) -> List[Path]:
     roots = [
-        Path("inputs"),
+        PROJECT_ROOT / "inputs",
     ]
     exts = {".jpg", ".jpeg", ".png"}
     samples: List[Path] = []
@@ -67,7 +72,7 @@ def _discover_sample_images(max_images: int = 12) -> List[Path]:
 
 @st.cache_resource(show_spinner=False)
 def _load_model(config_path: str, checkpoint_path: str) -> Tuple[DeepLabV3Plus, dict, torch.device]:
-    cfg = load_config(config_path)
+    cfg = load_config(_resolve(config_path))
     device = get_device(cfg["system"].get("device", "cuda"))
     model_cfg = cfg["model"]
 
@@ -79,7 +84,7 @@ def _load_model(config_path: str, checkpoint_path: str) -> Tuple[DeepLabV3Plus, 
         high_level_index=model_cfg.get("high_level_index", -1),
         decoder_channels=model_cfg.get("decoder_channels", 256),
     ).to(device)
-    ckpt = load_checkpoint(checkpoint_path, map_location=device)
+    ckpt = load_checkpoint(_resolve(checkpoint_path), map_location=device)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
     return model, cfg, device
@@ -99,31 +104,66 @@ def _predict(model: DeepLabV3Plus, cfg: dict, device: torch.device, image: Image
     return resized, pred_mask, overlay
 
 
-def main() -> None:
-    st.set_page_config(page_title="DeepLabV3+ Demo", layout="wide")
+def render_compare_three_backbones(use_sidebar: bool = True, key_prefix: str = "ctb") -> None:
     st.title("DeepLabV3+ Pascal VOC Demo")
 
-    st.sidebar.header("Model checkpoints")
-    checkpoint_paths: Dict[str, str] = {}
-    for name, config_path in MODEL_CONFIGS.items():
-        ckpt_candidates = _default_checkpoint_paths(config_path)
-        default_ckpt = next((p for p in ckpt_candidates if p.exists()), ckpt_candidates[0])
-        checkpoint_paths[name] = st.sidebar.text_input(f"{name} checkpoint", value=str(default_ckpt))
+    controls = st.sidebar if use_sidebar else st.container()
 
-    st.sidebar.header("Image")
+    checkpoint_paths: Dict[str, str] = {}
+    if use_sidebar:
+        panel = controls
+    else:
+        panel = controls.expander("Advanced settings", expanded=False)
+
+    with panel:
+        for name, config_path in MODEL_CONFIGS.items():
+            ckpt_candidates = _default_checkpoint_paths(config_path)
+            default_ckpt = next((p for p in ckpt_candidates if p.exists()), ckpt_candidates[0])
+            checkpoint_paths[name] = st.text_input(
+                f"{name} checkpoint",
+                value=str(default_ckpt),
+                key=f"{key_prefix}_ckpt_{name}",
+            )
+
     sample_images = _discover_sample_images()
     if not sample_images:
-        st.error("No sample image found in ./inputs")
+        st.error(f"No sample image found in {_resolve('inputs')}")
         st.stop()
 
     sample_labels = [str(p) for p in sample_images]
     default_idx = next((i for i, p in enumerate(sample_images) if p.name == DEFAULT_SAMPLE_NAME), 0)
-    selected_sample = st.sidebar.selectbox("Pick a sample image", sample_labels, index=default_idx)
-    if not any(p.name == DEFAULT_SAMPLE_NAME for p in sample_images):
-        st.sidebar.warning(f"Default sample {DEFAULT_SAMPLE_NAME} not found in ./inputs. Using first image.")
+    if use_sidebar:
+        selected_sample = controls.selectbox(
+            "Sample image",
+            sample_labels,
+            index=default_idx,
+            key=f"{key_prefix}_sample",
+        )
+        if not any(p.name == DEFAULT_SAMPLE_NAME for p in sample_images):
+            controls.warning(f"Default sample {DEFAULT_SAMPLE_NAME} not found in ./inputs. Using first image.")
 
-    uploaded_file = st.sidebar.file_uploader("or Upload image", type=["jpg", "jpeg", "png"])
-    run_btn = st.sidebar.button("Run inference", type="primary")
+        uploaded_file = controls.file_uploader(
+            "Upload image",
+            type=["jpg", "jpeg", "png"],
+            key=f"{key_prefix}_upload",
+        )
+        run_btn = controls.button("Run", type="primary", key=f"{key_prefix}_run", use_container_width=True)
+    else:
+        left, right = st.columns([2, 1])
+        with left:
+            selected_sample = st.selectbox(
+                "Sample image",
+                sample_labels,
+                index=default_idx,
+                key=f"{key_prefix}_sample",
+            )
+            uploaded_file = st.file_uploader(
+                "Upload image",
+                type=["jpg", "jpeg", "png"],
+                key=f"{key_prefix}_upload",
+            )
+        with right:
+            run_btn = st.button("Run", type="primary", key=f"{key_prefix}_run", use_container_width=True)
 
     input_image: Image.Image | None = None
     source_name = ""
@@ -135,14 +175,14 @@ def main() -> None:
         input_image = Image.open(selected_sample).convert("RGB")
         source_name = selected_sample
 
-    st.write("Models used in comparison: ResNet-50, ConvNeXt-Tiny, Swin-Tiny")
-
     if input_image is None:
-        st.info("Pick a sample image or upload one, then click Run inference.")
+        st.info("Pick a sample image or upload one, then click Run.")
         st.stop()
 
-    st.write(f"Image source: {source_name}")
-    st.image(input_image, caption="Input preview", width=320)
+    if not use_sidebar:
+        right.image(input_image, width=220)
+    else:
+        st.image(input_image, caption="Input preview", width=320)
 
     if run_btn:
         with st.spinner("Running inference for all 3 models..."):
@@ -151,7 +191,7 @@ def main() -> None:
 
             for model_name, config_path in MODEL_CONFIGS.items():
                 checkpoint_path = checkpoint_paths[model_name]
-                if not Path(checkpoint_path).exists():
+                if not _resolve(checkpoint_path).exists():
                     errors[model_name] = f"Checkpoint not found: {checkpoint_path}"
                     continue
                 try:
@@ -161,7 +201,7 @@ def main() -> None:
                     errors[model_name] = str(exc)
 
         if not results:
-            st.error("Failed to run all models. Check checkpoint paths in sidebar.")
+            st.error("Failed to run all models. Check checkpoint paths above.")
             for model_name, msg in errors.items():
                 st.error(f"{model_name}: {msg}")
             st.stop()
@@ -175,9 +215,14 @@ def main() -> None:
             if model_name not in results:
                 col.error("No result")
                 continue
-            resized, pred_mask, overlay = results[model_name]
+            _, pred_mask, overlay = results[model_name]
             col.image(overlay, caption="Overlay", use_container_width=True)
             col.image(pred_mask, caption="Predicted mask", use_container_width=True)
+
+
+def main() -> None:
+    st.set_page_config(page_title="DeepLabV3+ Demo", layout="wide")
+    render_compare_three_backbones(use_sidebar=True, key_prefix="ctb")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import time
 from pathlib import Path
+from io import BytesIO
 
 import numpy as np
 import streamlit as st
@@ -7,7 +8,10 @@ import torch
 import torchvision.transforms as T
 from PIL import Image, ImageDraw, ImageFont
 
-from inference_app import decode_segmap, get_instance_model, get_semantic_model
+try:
+    from .inference_app import decode_segmap, get_instance_model, get_semantic_model
+except ImportError:
+    from inference_app import decode_segmap, get_instance_model, get_semantic_model
 
 # Default font — no external file needed
 try:
@@ -24,6 +28,8 @@ VOC_CLASSES = [
     "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse",
     "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor",
 ]
+
+INSTANCE_THRESHOLD = 0.5
 
 
 # ---------------------------------------------------------------------------
@@ -183,39 +189,98 @@ def run_instance(model, image, threshold, device, sem_pred=None):
 # ---------------------------------------------------------------------------
 # UI
 # ---------------------------------------------------------------------------
-def main():
-    st.set_page_config(page_title="Segmentation Demo", layout="wide")
+def render_semantic_vs_instance(use_sidebar: bool = True, key_prefix: str = "svs"):
     st.title("Semantic vs Instance Segmentation")
-    st.caption("DeepLabV3 (pixel-level class map)  ·  Mask R-CNN (per-object mask)")
+    st.caption("DeepLabV3 and Mask R-CNN")
 
     sample_names = sorted(p.name for p in INPUTS_DIR.glob("*.jpg"))
 
-    # --- Sidebar controls ---
-    with st.sidebar:
-        st.header("⚙️ Controls")
-        source = st.radio("Image source", ["Sample images", "Upload"], horizontal=True)
+    pil_image = None
 
-        pil_image = None
+    if use_sidebar:
+        controls = st.sidebar
+        source = controls.radio(
+            "Image source",
+            ["Sample images", "Upload"],
+            horizontal=True,
+            key=f"{key_prefix}_source",
+        )
+
         if source == "Sample images":
             if not sample_names:
-                st.error("No images found in inputs/ folder.")
+                controls.error("No images found in inputs/ folder.")
             else:
                 _default = "2007_001311.jpg"
                 _default_idx = sample_names.index(_default) if _default in sample_names else 0
-                choice = st.selectbox("Pick a sample", sample_names, index=_default_idx)
+                choice = controls.selectbox(
+                    "Sample",
+                    sample_names,
+                    index=_default_idx,
+                    key=f"{key_prefix}_sample",
+                )
                 pil_image = Image.open(INPUTS_DIR / choice).convert("RGB")
-                st.image(pil_image, caption=choice, use_container_width=True)
         else:
-            uploaded = st.file_uploader("Upload image", type=["jpg", "jpeg", "png"])
+            uploaded = controls.file_uploader(
+                "Upload image",
+                type=["jpg", "jpeg", "png"],
+                key=f"{key_prefix}_upload",
+            )
             if uploaded:
-                pil_image = Image.open(uploaded).convert("RGB")
-                st.image(pil_image, use_container_width=True)
+                pil_image = Image.open(BytesIO(uploaded.read())).convert("RGB")
 
-        threshold = st.slider("Instance confidence threshold", 0.1, 0.9, 0.5, 0.05)
-        run_btn = st.button("▶ Run", type="primary", use_container_width=True)
+        run_btn = controls.button(
+            "Run",
+            type="primary",
+            use_container_width=True,
+            key=f"{key_prefix}_run",
+        )
+    else:
+        left, right = st.columns([2, 1])
+        with left:
+            source = st.radio(
+                "Image source",
+                ["Sample images", "Upload"],
+                horizontal=True,
+                key=f"{key_prefix}_source",
+            )
+
+            if source == "Sample images":
+                if not sample_names:
+                    st.error("No images found in inputs/ folder.")
+                else:
+                    _default = "2007_001311.jpg"
+                    _default_idx = sample_names.index(_default) if _default in sample_names else 0
+                    choice = st.selectbox(
+                        "Sample",
+                        sample_names,
+                        index=_default_idx,
+                        key=f"{key_prefix}_sample",
+                    )
+                    pil_image = Image.open(INPUTS_DIR / choice).convert("RGB")
+            else:
+                uploaded = st.file_uploader(
+                    "Upload image",
+                    type=["jpg", "jpeg", "png"],
+                    key=f"{key_prefix}_upload",
+                )
+                if uploaded:
+                    pil_image = Image.open(BytesIO(uploaded.read())).convert("RGB")
+
+        with right:
+            run_btn = st.button(
+                "Run",
+                type="primary",
+                use_container_width=True,
+                key=f"{key_prefix}_run",
+            )
+            if pil_image is not None:
+                st.image(pil_image, width=220)
 
     if not run_btn:
-        st.info("Select an image in the sidebar and press **▶ Run**.")
+        if use_sidebar:
+            st.info("Select image and click Run.")
+        else:
+            st.info("Select image and click Run.")
         return
 
     if pil_image is None:
@@ -232,7 +297,13 @@ def main():
     # --- Inference ---
     with st.spinner("Running inference…"):
         sem_mask, sem_ms, sem_classes, sem_fg, sem_pred = run_semantic(sem_model, pil_image, device)
-        ins_overlay, ins_ms, ins_count, ins_conf, ins_instances = run_instance(ins_model, pil_image, threshold, device, sem_pred=sem_pred)
+        ins_overlay, ins_ms, ins_count, ins_conf, ins_instances = run_instance(
+            ins_model,
+            pil_image,
+            INSTANCE_THRESHOLD,
+            device,
+            sem_pred=sem_pred,
+        )
 
     # --- Results: 3-column image grid ---
     c1, c2, c3 = st.columns(3)
@@ -260,7 +331,7 @@ def main():
         st.caption(f"Foreground coverage: {sem_fg:.1f}%")
 
     with col_ins:
-        st.markdown(f"**Instance — {ins_count} object(s) detected** (threshold {threshold})")
+        st.markdown(f"**Instance — {ins_count} object(s) detected**")
         if ins_instances:
             import pandas as pd
             st.dataframe(pd.DataFrame(ins_instances), hide_index=True, use_container_width=True)
@@ -275,4 +346,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    st.set_page_config(page_title="Segmentation Demo", layout="wide")
+    render_semantic_vs_instance(use_sidebar=True, key_prefix="svs")
