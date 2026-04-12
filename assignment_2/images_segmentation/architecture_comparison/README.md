@@ -14,7 +14,7 @@ This repository contains the complete PyTorch implementation for **Image Segment
 ## 📁 Repository Structure
 
 ```
-architecture/
+architecture_comparison/
 ├── dataset/
 │   ├── augmentations.py     # Crop, padding, and Copy-Paste logic
 │   └── pascal_voc.py        # Customized VOCDataset wrapper

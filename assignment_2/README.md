@@ -13,33 +13,87 @@
 
 ---
 
-This README is the report-style overview for the two mini tasks in Assignment 2:
+This README is the report-style overview for the three segmentation mini tasks in Assignment 2:
 
-1. [part-3](part-3)
-2. [images_segmentation/voc_deeplab_backbone_project](images_segmentation/voc_deeplab_backbone_project)
+1. [images_segmentation/architecture_comparison](images_segmentation/architecture_comparison)
+2. [images_segmentation/compare_three_backbones](images_segmentation/compare_three_backbones)
+3. [images_segmentation/semantic_vs_instance](images_segmentation/semantic_vs_instance)
 
-Both tasks use Pascal VOC 2012 and focus on segmentation pipelines for deep learning in computer vision.
+All tasks use Pascal VOC 2012 and focus on segmentation pipelines for deep learning in computer vision.
 
 ## Assignment Goal
 
-This assignment investigates segmentation from two complementary angles:
+This assignment investigates segmentation from three complementary angles:
 
-1. Architecture comparison under a controlled setup (fixed DeepLabV3+ head, different backbones).
-2. End-to-end application workflow combining semantic segmentation and instance segmentation with deployable inference.
+1. Baseline architecture comparison (U-Net vs DeepLabV3+).
+2. Backbone comparison under a controlled setup (fixed DeepLabV3+ head, different encoders).
+3. End-to-end application workflow combining semantic segmentation and instance segmentation with deployable inference.
 
 ## Repository Layout
 
 ```text
 assignment_2/
 ├── images_segmentation/
-│   └── voc_deeplab_backbone_project/
-└── part-3/
+│   ├── architecture_comparison/
+│   ├── compare_three_backbones/
+│   └── semantic_vs_instance/
+└── docs/
 ```
 
-## Task A: DeepLabV3+ Backbone Comparison
+## Task A: Architecture Comparison (U-Net vs DeepLabV3+)
 
 Project path:
-- [images_segmentation/voc_deeplab_backbone_project](images_segmentation/voc_deeplab_backbone_project)
+- [images_segmentation/architecture_comparison](images_segmentation/architecture_comparison)
+
+### Objective
+
+Benchmark two semantic segmentation architectures on Pascal VOC 2012:
+
+- U-Net (ResNet-50 backbone)
+- DeepLabV3+ (ResNet-50 backbone)
+
+### Experimental Scope
+
+- Dataset: Pascal VOC 2012 semantic segmentation.
+- Architectures: U-Net and DeepLabV3+ (implemented with segmentation-models-pytorch).
+- Training pipeline: early stopping, checkpointing, TensorBoard logging.
+- Optional extensions: Copy-Paste augmentation and Grad-CAM visualization.
+
+### Evaluation Metrics
+
+- mIoU (Mean Intersection over Union)
+- Dice Score
+- Pixel Accuracy
+
+### Deliverables
+
+- Main training script: [images_segmentation/architecture_comparison/train.py](images_segmentation/architecture_comparison/train.py)
+- Dataset and augmentations: [images_segmentation/architecture_comparison/dataset](images_segmentation/architecture_comparison/dataset)
+- Model builder: [images_segmentation/architecture_comparison/models/builder.py](images_segmentation/architecture_comparison/models/builder.py)
+- Losses and metrics: [images_segmentation/architecture_comparison/utils](images_segmentation/architecture_comparison/utils)
+- Explainability extension: [images_segmentation/architecture_comparison/extensions/gradcam_eval.py](images_segmentation/architecture_comparison/extensions/gradcam_eval.py)
+- Supporting notebooks: [images_segmentation/architecture_comparison/notebooks](images_segmentation/architecture_comparison/notebooks)
+- Detailed task documentation: [images_segmentation/architecture_comparison/README.md](images_segmentation/architecture_comparison/README.md)
+
+### Reproduction (Quick Start)
+
+```bash
+cd assignment_2/images_segmentation/architecture_comparison
+python -m venv .venv
+source .venv/bin/activate
+pip install segmentation-models-pytorch albumentations tensorboard
+
+# Baseline U-Net
+python train.py --arch unet --backbone resnet50 --download --batch-size 16 --epochs 50 --patience 10
+
+# Baseline DeepLabV3+
+python train.py --arch deeplabv3plus --backbone resnet50 --download --batch-size 16 --epochs 50 --patience 10
+```
+
+## Task B: DeepLabV3+ Backbone Comparison
+
+Project path:
+- [images_segmentation/compare_three_backbones](images_segmentation/compare_three_backbones)
 
 ### Objective
 
@@ -89,10 +143,10 @@ VOCdevkit/
 
 ### Deliverables
 
-- Training, evaluation, and inference scripts in [images_segmentation/voc_deeplab_backbone_project/src](images_segmentation/voc_deeplab_backbone_project/src)
-- Configuration files in [images_segmentation/voc_deeplab_backbone_project/configs](images_segmentation/voc_deeplab_backbone_project/configs)
-- Experiment artifacts in [images_segmentation/voc_deeplab_backbone_project/artifacts](images_segmentation/voc_deeplab_backbone_project/artifacts)
-- Detailed task documentation in [images_segmentation/voc_deeplab_backbone_project/README.md](images_segmentation/voc_deeplab_backbone_project/README.md)
+- Training, evaluation, and inference scripts in [images_segmentation/compare_three_backbones/src](images_segmentation/compare_three_backbones/src)
+- Configuration files in [images_segmentation/compare_three_backbones/configs](images_segmentation/compare_three_backbones/configs)
+- Experiment artifacts in [images_segmentation/compare_three_backbones/artifacts](images_segmentation/compare_three_backbones/artifacts)
+- Detailed task documentation in [images_segmentation/compare_three_backbones/README.md](images_segmentation/compare_three_backbones/README.md)
 
 Each experiment run stores outputs in `artifacts/experiments/<exp_name>/`, including:
 - `best.pt`
@@ -104,7 +158,7 @@ Each experiment run stores outputs in `artifacts/experiments/<exp_name>/`, inclu
 ### Reproduction (Quick Start)
 
 ```bash
-cd assignment_2/images_segmentation/voc_deeplab_backbone_project
+cd assignment_2/images_segmentation/compare_three_backbones
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -133,7 +187,7 @@ python -m src.demo_app --config configs/deeplabv3plus_resnet50.yaml --checkpoint
 Streamlit app:
 
 ```bash
-cd assignment_2/images_segmentation/voc_deeplab_backbone_project
+cd assignment_2/images_segmentation/compare_three_backbones
 python -m streamlit run src/streamlit_app.py --server.port 8502
 ```
 
@@ -148,10 +202,10 @@ Report templates and presentation support are available in:
 - `reports/slide_outline.md`
 - `landing_page/index.html`
 
-## Task B: Semantic + Instance Segmentation Pipeline
+## Task C: Semantic + Instance Segmentation Pipeline
 
 Project path:
-- [part-3](part-3)
+- [images_segmentation/semantic_vs_instance](images_segmentation/semantic_vs_instance)
 
 ### Objective
 
@@ -181,12 +235,12 @@ Project design details:
 
 ### Deliverables
 
-- Notebooks in [part-3/notebooks](part-3/notebooks)
-- Inference application in [part-3/inference_app.py](part-3/inference_app.py)
-- Runtime configuration in [part-3/config.yaml](part-3/config.yaml)
-- Pretrained model checkpoints in [part-3/models](part-3/models)
-- Output visualizations in [part-3/outputs](part-3/outputs)
-- Detailed task documentation in [part-3/README.md](part-3/README.md)
+- Notebooks in [images_segmentation/semantic_vs_instance/notebooks](images_segmentation/semantic_vs_instance/notebooks)
+- Inference application in [images_segmentation/semantic_vs_instance/inference_app.py](images_segmentation/semantic_vs_instance/inference_app.py)
+- Runtime configuration in [images_segmentation/semantic_vs_instance/config.yaml](images_segmentation/semantic_vs_instance/config.yaml)
+- Pretrained model checkpoints in [images_segmentation/semantic_vs_instance/models](images_segmentation/semantic_vs_instance/models)
+- Output visualizations in [images_segmentation/semantic_vs_instance/outputs](images_segmentation/semantic_vs_instance/outputs)
+- Detailed task documentation in [images_segmentation/semantic_vs_instance/README.md](images_segmentation/semantic_vs_instance/README.md)
 
 Notebook responsibilities:
 - `semantic_segmentation_voc.ipynb`: data preparation, model head adaptation, mIoU tracking, FPS logging.
@@ -195,19 +249,19 @@ Notebook responsibilities:
 ### Reproduction (Quick Start)
 
 ```bash
-cd assignment_2/part-3
+cd assignment_2/images_segmentation/semantic_vs_instance
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python inference_app.py
 ```
 
-Before running inference, ensure checkpoints are available in [part-3/models](part-3/models), and update image path plus task mode in [part-3/config.yaml](part-3/config.yaml).
+Before running inference, ensure checkpoints are available in [images_segmentation/semantic_vs_instance/models](images_segmentation/semantic_vs_instance/models), and update image path plus task mode in [images_segmentation/semantic_vs_instance/config.yaml](images_segmentation/semantic_vs_instance/config.yaml).
 
 Streamlit app:
 
 ```bash
-cd assignment_2/part-3/
+cd assignment_2/images_segmentation/semantic_vs_instance/
 python -m streamlit run streamlit_app.py --server.port 8502
 ```
 
@@ -234,14 +288,16 @@ The notebooks are designed to run on local GPU, Kaggle, and Google Colab.
 
 ## Summary
 
-Assignment 2 is organized into two complementary segmentation studies:
+Assignment 2 is organized into three complementary segmentation studies:
 
-1. Controlled backbone comparison for semantic segmentation using a fixed DeepLabV3+ pipeline.
-2. End-to-end semantic and instance segmentation workflow with notebook experiments and an inference application.
+1. Baseline architecture comparison (U-Net vs DeepLabV3+) on Pascal VOC 2012.
+2. Controlled backbone comparison for semantic segmentation using a fixed DeepLabV3+ pipeline.
+3. End-to-end semantic and instance segmentation workflow with notebook experiments and an inference application.
 
-Together, these two mini tasks cover both architecture-level analysis and practical deployment-oriented inference.
+Together, these three mini tasks cover baseline benchmarking, controlled backbone analysis, and practical deployment-oriented inference.
 
 ## Task Readmes
 
-- [part-3 README](part-3/README.md)
-- [voc_deeplab_backbone_project README](images_segmentation/voc_deeplab_backbone_project/README.md)
+- [architecture_comparison README](images_segmentation/architecture_comparison/README.md)
+- [semantic_vs_instance README](images_segmentation/semantic_vs_instance/README.md)
+- [compare_three_backbones README](images_segmentation/compare_three_backbones/README.md)
