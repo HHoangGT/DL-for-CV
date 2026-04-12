@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Group13 | Assignment Landing Page</title>
+  <title>Group13 | DL for CV</title>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
 
@@ -402,196 +402,143 @@
         padding: 20px;
       }
     }
+
+    /* ── Markdown rendered content ── */
+    .md-content { line-height: 1.65; }
+    .md-content h1 { font-family: "Space Grotesk", sans-serif; font-size: 1.5rem; color: var(--brand-strong); margin: 8px 0 14px; }
+    .md-content h2 { font-family: "Space Grotesk", sans-serif; font-size: 1.15rem; color: var(--brand-strong); margin: 26px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .md-content h3 { font-size: 1rem; font-weight: 700; color: var(--brand-strong); margin: 18px 0 7px; }
+    .md-content h4 { font-size: 0.95rem; color: var(--muted); margin: 12px 0 5px; font-weight: 600; }
+    .md-content p { margin: 0 0 10px; }
+    .md-content pre { background: #101812; color: #edf8e9; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); padding: 12px 16px; overflow-x: auto; margin: 10px 0; }
+    .md-content pre code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.87rem; line-height: 1.5; background: none; padding: 0; border-radius: 0; }
+    .md-content code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88rem; background: rgba(31,111,74,0.1); padding: 2px 6px; border-radius: 4px; }
+    .md-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.93rem; }
+    .md-content th, .md-content td { padding: 7px 11px; border: 1px solid var(--line); text-align: left; }
+    .md-content th { background: rgba(31,111,74,0.08); font-weight: 600; color: var(--brand-strong); }
+    .md-content tr:nth-child(even) td { background: rgba(255,255,255,0.3); }
+    .md-content img { max-width: 70%; border-radius: 10px; margin: 8px 0; display: block; }
+    .md-content blockquote { border-left: 3px solid var(--brand); padding: 5px 14px; margin: 10px 0; color: var(--muted); background: rgba(31,111,74,0.05); border-radius: 0 8px 8px 0; }
+    .md-content a { color: var(--brand); }
+    .md-content hr { border: none; border-top: 1px solid var(--line); margin: 22px 0; }
+    .md-content ul, .md-content ol { padding-left: 22px; margin: 0 0 10px; }
+    .md-content li { margin: 4px 0; }
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+    .error-banner { background: rgba(186,26,26,0.08); border: 1px solid rgba(186,26,26,0.2); border-radius: 12px; padding: 14px 18px; color: #7c1010; margin-top: 14px; }
   </style>
 </head>
 <body>
   <div class="layout">
-    <aside class="menu" aria-label="Assignment menu">
+    <aside class="menu" aria-label="Navigation menu">
       <h2 class="menu-title">DL for CV</h2>
       <p class="menu-subtitle">GitHub Landing Navigation</p>
-
       <button id="home-btn" class="menu-button active" type="button">Home</button>
-
-      <div class="assignment-row">
-        <button id="assignment-btn" class="assignment-button" type="button">assignment_1</button>
-        <button id="expand-btn" class="expand-button" aria-expanded="true" aria-controls="tasks" type="button">-</button>
-      </div>
-
-      <div id="tasks" class="tasks" role="group" aria-label="Assignment tasks"></div>
+      <div id="nav-pages"></div>
     </aside>
 
     <main id="content" class="content" aria-live="polite"></main>
   </div>
 
   <script src="assignment_1/docs/content.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
   <script>
-    const state = {
-      assignmentExpanded: true,
-      currentView: "home",
-      currentTask: null
-    };
+    marked.use({ breaks: true, gfm: true });
 
-    const refs = {
-      homeBtn: document.getElementById("home-btn"),
-      assignmentBtn: document.getElementById("assignment-btn"),
-      expandBtn: document.getElementById("expand-btn"),
-      tasksWrap: document.getElementById("tasks"),
-      content: document.getElementById("content")
-    };
+    const navPages  = document.getElementById("nav-pages");
+    const homeBtn   = document.getElementById("home-btn");
+    const contentEl = document.getElementById("content");
 
-    const assignment = CONTENT.assignment.assignment_1;
+    // Build sidebar nav buttons from CONTENT.pages metadata
+    CONTENT.pages.forEach(page => {
+      const btn = document.createElement("button");
+      btn.className   = "menu-button";
+      btn.type        = "button";
+      btn.dataset.id  = page.id;
+      btn.textContent = page.title;
+      btn.addEventListener("click", () => navigate(page.id));
+      navPages.appendChild(btn);
+    });
 
-    const taskEntries = Object.entries(assignment.tasks);
-
-    function escapeHTML(text) {
-      return text
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    function setActive(pageId) {
+      homeBtn.classList.toggle("active", pageId === null);
+      navPages.querySelectorAll(".menu-button").forEach(btn =>
+        btn.classList.toggle("active", btn.dataset.id === pageId)
+      );
     }
 
-    function renderTaskButtons() {
-      refs.tasksWrap.innerHTML = taskEntries
-        .map(([key, task]) => {
-          const activeClass = state.currentView === "task" && state.currentTask === key ? "active" : "";
-          return '<button class="task-button ' + activeClass + '" data-task="' + key + '" type="button">' + escapeHTML(task.name) + "</button>";
-        })
-        .join("");
+    function navigate(pageId) {
+      setActive(pageId);
+      if (pageId === null) { renderHome(); return; }
+      const page = CONTENT.pages.find(p => p.id === pageId);
+      if (page) renderPage(page);
+    }
 
-      refs.tasksWrap.querySelectorAll(".task-button").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          state.currentView = "task";
-          state.currentTask = btn.getAttribute("data-task");
-          updateView();
-        });
-      });
+    function esc(text) {
+      return String(text)
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    }
+
+    function buildLinks(links) {
+      if (!links || !links.length) return "";
+      const items = links.map(l =>
+        `<a class="report-link" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>`
+      ).join("");
+      return `<div class="resource-links">${items}</div>`;
+    }
+
+    // Rewrite relative image paths in markdown text to include the section base path
+    function rebaseImages(md, basePath) {
+      md = md.replace(/!\[([^\]]*)\]\((?!https?:\/\/)([^)]+)\)/g,
+        (_, alt, src) => `![${alt}](${basePath}/${src})`);
+      md = md.replace(/(<img\b[^>]*?)src="(?!https?:\/\/|\/|data:)([^"]+)"/g,
+        (_, pre, src) => `${pre}src="${basePath}/${src}"`);
+      return md;
     }
 
     function renderHome() {
-      const home = CONTENT.home;
-      const members = home.members.map((m) => "<li>" + escapeHTML(m) + "</li>").join("");
-
-      refs.content.innerHTML = [
-        '<span class="eyebrow">Home</span>',
-        "<h1>" + escapeHTML(home.title) + "</h1>",
-        '<p class="lead">Welcome to the Group13 landing page. This page is used to navigate assignment reports and quickly access key implementation details.</p>',
-        '<div class="card-grid">',
-        '<article class="card"><h3>Group</h3><p>' + escapeHTML(home.group) + "</p></article>",
-        '<article class="card"><h3>Supervisor</h3><p>' + escapeHTML(home.supervisor) + "</p></article>",
-        "</div>",
-        '<h2 class="section-title">Members</h2>',
-        "<ul>" + members + "</ul>"
-      ].join("");
+      const { group, supervisor, members } = CONTENT.site;
+      const membersHTML = members.map(m => `<li>${esc(m)}</li>`).join("");
+      contentEl.innerHTML = `
+        <span class="eyebrow">Home</span>
+        <h1>${esc(group)} — DL for Computer Vision</h1>
+        <p class="lead">Welcome to the Group13 landing page. Use the sidebar to view detailed reports for each section.</p>
+        <div class="card-grid">
+          <article class="card"><h3>Group</h3><p>${esc(group)}</p></article>
+          <article class="card"><h3>Supervisor</h3><p>${esc(supervisor)}</p></article>
+        </div>
+        <h2 class="section-title">Members</h2>
+        <ul>${membersHTML}</ul>`;
     }
 
-    function renderAssignmentOverview() {
-      const infoHTML = assignment.info.map((item) => "<li>" + escapeHTML(item) + "</li>").join("");
-      const overviewHTML = assignment.overview.map((item) => "<li>" + escapeHTML(item) + "</li>").join("");
-
-      refs.content.innerHTML = [
-        '<span class="eyebrow">Assignment</span>',
-        "<h1>" + escapeHTML(assignment.title) + "</h1>",
-        '<p class="lead">Click a task in the left menu to open detailed report content for that specific section.</p>',
-        '<div class="resource-links">',
-        '<a class="report-link" href="' + escapeHTML(assignment.report) + '" target="_blank" rel="noopener noreferrer">Open Full Report (PDF)</a>',
-        '<a class="report-link" href="' + escapeHTML(assignment.readme) + '" target="_blank" rel="noopener noreferrer">Open Readme</a>',
-        '<a class="report-link" href="' + escapeHTML(assignment.youtube) + '" target="_blank" rel="noopener noreferrer">Open Youtube</a>',
-        '</div>',
-        '<h2 class="section-title">Assignment Info</h2>',
-        "<ul>" + infoHTML + "</ul>",
-        '<h2 class="section-title">Overview</h2>',
-        "<ul>" + overviewHTML + "</ul>"
-      ].join("");
-    }
-
-    function renderTask(taskKey) {
-      const task = assignment.tasks[taskKey];
-      const highlights = task.highlights.map((item) => "<li>" + escapeHTML(item) + "</li>").join("");
-      const commands = task.commands.map((cmd) => "<code>$ " + escapeHTML(cmd) + "</code>").join("");
-      const visuals = task.visuals
-        .map((v) => {
-          return [
-            "<figure>",
-            '<img src="' + escapeHTML(v.src) + '" alt="' + escapeHTML(v.alt) + '">',
-            "<figcaption>" + escapeHTML(v.alt) + "</figcaption>",
-            "</figure>"
-          ].join("");
-        })
-        .join("");
-
-      refs.content.innerHTML = [
-        '<span class="eyebrow">Detailed Report</span>',
-        "<h1>" + escapeHTML(task.name) + "</h1>",
-        '<p class="lead">' + escapeHTML(task.objective) + "</p>",
-        '<div class="card-grid">',
-        '<article class="card"><h3>Dataset</h3><p>' + escapeHTML(task.dataset) + "</p></article>",
-        '<article class="card"><h3>Directory</h3><p>' + escapeHTML(task.directory) + "</p></article>",
-        "</div>",
-        '<h2 class="section-title">Technical Highlights</h2>',
-        "<ul>" + highlights + "</ul>",
-        '<h2 class="section-title">Quick Commands</h2>',
-        '<div class="code-list">' + commands + "</div>",
-        '<h2 class="section-title">Visual Results</h2>',
-        '<div class="visuals">' + visuals + "</div>"
-      ].join("");
-    }
-
-    function syncMenuState() {
-      refs.homeBtn.classList.toggle("active", state.currentView === "home");
-      refs.assignmentBtn.classList.toggle("active", state.currentView === "assignment");
-      refs.expandBtn.classList.toggle("active", state.assignmentExpanded);
-      refs.expandBtn.textContent = state.assignmentExpanded ? "-" : "+";
-      refs.expandBtn.setAttribute("aria-expanded", String(state.assignmentExpanded));
-      refs.tasksWrap.classList.toggle("open", state.assignmentExpanded);
-
-      if (!state.assignmentExpanded && state.currentView === "task") {
-        state.currentView = "assignment";
-        state.currentTask = null;
+    async function renderPage(page) {
+      const loadingEl = document.createElement("div");
+      loadingEl.className   = "loading";
+      loadingEl.textContent = "Loading report\u2026";
+      contentEl.innerHTML = `
+        <span class="eyebrow">${esc(page.title)}</span>
+        <h1>${esc(page.subtitle)}</h1>
+        ${buildLinks(page.links)}`;
+      contentEl.appendChild(loadingEl);
+      try {
+        const resp = await fetch(page.readmePath);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        let md = await resp.text();
+        md = rebaseImages(md, page.basePath);
+        const mdEl = document.createElement("div");
+        mdEl.className = "md-content";
+        mdEl.innerHTML = marked.parse(md);
+        loadingEl.replaceWith(mdEl);
+      } catch (err) {
+        const errEl = document.createElement("div");
+        errEl.className   = "error-banner";
+        errEl.textContent = `Could not load report: ${err}`;
+        loadingEl.replaceWith(errEl);
       }
     }
 
-    function updateView() {
-      syncMenuState();
-      renderTaskButtons();
-
-      if (state.currentView === "home") {
-        renderHome();
-        return;
-      }
-
-      if (state.currentView === "assignment") {
-        renderAssignmentOverview();
-        return;
-      }
-
-      if (state.currentView === "task" && state.currentTask) {
-        renderTask(state.currentTask);
-      }
-    }
-
-    refs.homeBtn.addEventListener("click", () => {
-      state.currentView = "home";
-      state.currentTask = null;
-      updateView();
-    });
-
-    refs.assignmentBtn.addEventListener("click", () => {
-      state.currentView = "assignment";
-      state.currentTask = null;
-      updateView();
-    });
-
-    refs.expandBtn.addEventListener("click", () => {
-      state.assignmentExpanded = !state.assignmentExpanded;
-      if (state.assignmentExpanded && state.currentView === "home") {
-        state.currentView = "assignment";
-      }
-      updateView();
-    });
-
-    updateView();
+    homeBtn.addEventListener("click", () => navigate(null));
+    navigate(null);
   </script>
 </body>
 </html>

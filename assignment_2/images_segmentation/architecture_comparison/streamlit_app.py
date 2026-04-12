@@ -72,6 +72,13 @@ def _discover_checkpoints() -> Dict[str, Path]:
     return options
 
 
+def _pick_checkpoint_for_architecture(ckpt_options: Dict[str, Path], architecture: str) -> Tuple[str, Path] | None:
+    for variant in sorted(ckpt_options.keys()):
+        if _variant_architecture(variant) == architecture:
+            return variant, ckpt_options[variant]
+    return None
+
+
 def _variant_architecture(variant_name: str) -> str:
     name = variant_name.lower()
     if "unet" in name:
@@ -133,7 +140,7 @@ def _load_model(architecture: str, checkpoint_path: str):
     return model, device
 
 
-def _infer(model, device, image: Image.Image, image_size: int = 512) -> Tuple[np.ndarray, np.ndarray, float, List[str]]:
+def _infer(model, device, image: Image.Image, image_size: int = 512) -> Tuple[np.ndarray, np.ndarray, np.ndarray, float, List[str]]:
     resized = image.convert("RGB").resize((image_size, image_size), Image.BILINEAR)
     x = TF.to_tensor(resized)
     x = TF.normalize(x, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]).unsqueeze(0).to(device)
@@ -160,7 +167,13 @@ def _infer(model, device, image: Image.Image, image_size: int = 512) -> Tuple[np
     overlay = (0.55 * base + 0.45 * color_mask.astype(np.float32)).clip(0, 255).astype(np.uint8)
 
     classes = sorted({VOC_CLASSES[int(c)] for c in np.unique(pred) if 0 < c < len(VOC_CLASSES)})
-    return color_mask, overlay, elapsed_ms, classes
+    return pred, color_mask, overlay, elapsed_ms, classes
+
+
+def _count_model_params(model) -> Tuple[int, int]:
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    return total_params, trainable_params
 
 
 def render_architecture_comparison(use_sidebar: bool = True, key_prefix: str = "arch") -> None:
@@ -170,38 +183,35 @@ def render_architecture_comparison(use_sidebar: bool = True, key_prefix: str = "
     controls = st.sidebar if use_sidebar else st.container()
     ckpt_options = _discover_checkpoints()
 
+    selected_unet = _pick_checkpoint_for_architecture(ckpt_options, "unet")
+    selected_deeplab = _pick_checkpoint_for_architecture(ckpt_options, "deeplabv3plus")
+
     if use_sidebar:
         model_box = controls
     else:
         model_box = controls.expander("Model settings", expanded=False)
 
     with model_box:
-        architecture = st.radio(
-            "Architecture",
-            options=["unet", "deeplabv3plus"],
-            horizontal=True,
-            key=f"{key_prefix}_arch",
-        )
+        st.write("The demo runs both architectures in one click.")
+        if selected_unet:
+            st.text_input(
+                "U-Net checkpoint",
+                value=str(selected_unet[1]),
+                key=f"{key_prefix}_unet_ckpt",
+                disabled=True,
+            )
+        else:
+            st.warning("No U-Net checkpoint found in architecture_comparison/artifacts")
 
-        matching_variants = [name for name in sorted(ckpt_options.keys()) if _variant_architecture(name) == architecture]
-        selected_variant = st.selectbox(
-            "Variant",
-            options=matching_variants if matching_variants else ["(no checkpoint found)"],
-            key=f"{key_prefix}_variant",
-        )
-
-        default_checkpoint = ""
-        if matching_variants:
-            default_checkpoint = str(ckpt_options[selected_variant])
-
-        checkpoint_path = st.text_input(
-            "Checkpoint path",
-            value=default_checkpoint,
-            key=f"{key_prefix}_ckpt",
-        )
-
-        if not matching_variants:
-            st.warning("No checkpoint found for this architecture in architecture_comparison/artifacts")
+        if selected_deeplab:
+            st.text_input(
+                "DeepLabV3+ checkpoint",
+                value=str(selected_deeplab[1]),
+                key=f"{key_prefix}_deeplab_ckpt",
+                disabled=True,
+            )
+        else:
+            st.warning("No DeepLabV3+ checkpoint found in architecture_comparison/artifacts")
 
     samples = _discover_sample_images()
     sample_labels = [str(p) for p in samples]
@@ -265,42 +275,83 @@ def render_architecture_comparison(use_sidebar: bool = True, key_prefix: str = "
         st.info("Choose image and click Run.")
         return
 
-    if not checkpoint_path:
-        st.warning("Checkpoint path is required. Expected examples in architecture_comparison/artifacts/*/best.pth")
-        return
-
-    ckpt = Path(checkpoint_path)
-    if not ckpt.is_absolute():
-        ckpt = ROOT / checkpoint_path
-    if not ckpt.exists():
-        st.error(f"Checkpoint not found: {ckpt}")
+    if selected_unet is None or selected_deeplab is None:
+        st.warning("Both U-Net and DeepLabV3+ checkpoints are required in architecture_comparison/artifacts/*/best.pth")
         return
 
     if input_image is None:
         st.warning("Please upload or select an input image.")
         return
 
-    try:
-        with st.spinner("Loading model..."):
-            model, device = _load_model(architecture, str(ckpt))
+    models_to_run = [
+        ("unet", selected_unet[0], selected_unet[1]),
+        ("deeplabv3plus", selected_deeplab[0], selected_deeplab[1]),
+    ]
 
-        with st.spinner("Running inference..."):
-            mask, overlay, elapsed_ms, classes = _infer(model, device, input_image)
+    for arch_name, variant_name, ckpt in models_to_run:
+        if not ckpt.exists():
+            st.error(f"Checkpoint not found for {arch_name} ({variant_name}): {ckpt}")
+            return
+
+    try:
+        results = []
+        with st.spinner("Loading models and running inference..."):
+            for architecture, variant_name, ckpt in models_to_run:
+                model, device = _load_model(architecture, str(ckpt))
+                total_params, trainable_params = _count_model_params(model)
+                pred, mask, overlay, elapsed_ms, classes = _infer(model, device, input_image)
+                results.append({
+                    "architecture": architecture,
+                    "variant": variant_name,
+                    "checkpoint": str(ckpt),
+                    "total_params": total_params,
+                    "trainable_params": trainable_params,
+                    "latency_ms": elapsed_ms,
+                    "classes": classes,
+                    "pred": pred,
+                    "mask": mask,
+                    "overlay": overlay,
+                })
     except Exception as exc:
         st.error(f"Inference failed: {exc}")
         return
 
-    c1, c2, c3 = st.columns(3)
-    c1.image(input_image, caption=f"Input ({source})", use_container_width=True)
-    c2.image(mask, caption="Predicted mask", use_container_width=True)
-    c3.image(overlay, caption="Overlay", use_container_width=True)
+    st.subheader("Architecture Parameter Comparison")
 
-    m1, m2 = st.columns(2)
-    m1.metric("Detected classes", str(len(classes)))
-    m2.metric("Latency (ms)", f"{elapsed_ms:.1f}" if elapsed_ms > 0 else "N/A")
+    summary_cols = st.columns(2)
+    for idx, result in enumerate(results):
+        with summary_cols[idx]:
+            title = "U-Net" if result["architecture"] == "unet" else "DeepLabV3+"
+            st.markdown(f"### {title}")
+            st.caption(result["variant"])
+            foreground_ratio = float((result["pred"] > 0).mean() * 100.0)
 
-    if classes:
-        st.write("Classes:", ", ".join(classes))
+            st.write(f"Detected classes: {len(result['classes'])}")
+            st.write(f"Foreground ratio: {foreground_ratio:.2f}%")
+            st.write(f"Total params: {result['total_params']:,}")
+
+    left, right = st.columns(2)
+    col_map = {
+        "unet": left,
+        "deeplabv3plus": right,
+    }
+    title_map = {
+        "unet": "U-Net",
+        "deeplabv3plus": "DeepLabV3+",
+    }
+
+    for result in results:
+        col = col_map[result["architecture"]]
+        with col:
+            st.markdown(f"### {title_map[result['architecture']]}")
+            st.caption(result["variant"])
+            c1, c2 = st.columns(2)
+            c1.image(result["mask"], caption="Predicted mask", use_container_width=True)
+            c2.image(result["overlay"], caption="Overlay", use_container_width=True)
+            if result["classes"]:
+                st.write("Classes:", ", ".join(result["classes"]))
+            else:
+                st.write("Classes: (background only)")
 
 
 def main() -> None:
