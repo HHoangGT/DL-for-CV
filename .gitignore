@@ -162,10 +162,10 @@ excercise/part-4/cifar10_part34_project/results/
 assignment_1/food101_project/
 assignment_1/text-classification/models/
 
-# voc_deeplab_backbone_project
-assignment_2/images_segmentation/voc_deeplab_backbone_project/data/
-assignment_2/images_segmentation/voc_deeplab_backbone_project/artifacts/
-assignment_2/images_segmentation/voc_deeplab_backbone_project/reports/
+# compare_three_backbones
+assignment_2/images_segmentation/compare_three_backbones/data/
+assignment_2/images_segmentation/compare_three_backbones/artifacts/
+assignment_2/images_segmentation/compare_three_backbones/reports/
 
 # checkpoints / weights
 *.pth
@@ -188,3 +188,7 @@ assignment_2/images_segmentation/voc_deeplab_backbone_project/reports/
 *.zip
 *.rar
 *.7z
+
+# data
+*data/
+*checkpoints/
